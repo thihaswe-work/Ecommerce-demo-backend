@@ -11,9 +11,9 @@ export class OrdersService {
   async create(data: Partial<Order>): Promise<Order> {
     const order: Order = this.repo.create({
       ...data,
-      id: uuid(), // generate id here
-      createdAt: new Date(), // optional if entity already has default
-      updatedAt: new Date(), // optional if entity already has default
+      id: uuid(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     return this.repo.save(order);
   }

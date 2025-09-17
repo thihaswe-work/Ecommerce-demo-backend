@@ -6,6 +6,11 @@ import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
+import { Product } from './products/entities/product.entity';
+import { User } from './users/entities/user.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
+import { PaymentMethod } from './payments/entities/payment.entity';
 
 @Module({
   imports: [

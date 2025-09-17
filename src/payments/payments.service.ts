@@ -1,25 +1,30 @@
-import { Injectable } from '@nestjs/common';
-import { PaymentMethod } from './payments.interface';
-const { v4: uuid } = require('uuid');
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PaymentMethod } from './entities/payment.entity';
 
 @Injectable()
 export class PaymentsService {
-  private methods: PaymentMethod[] = [];
+  constructor(
+    @InjectRepository(PaymentMethod) private repo: Repository<PaymentMethod>,
+  ) {}
 
-  create(data: Partial<PaymentMethod>): PaymentMethod {
-    const method: PaymentMethod = { id: uuid(), ...data } as PaymentMethod;
-    this.methods.push(method);
-    return method;
+  async create(data: Partial<PaymentMethod>): Promise<PaymentMethod> {
+    const method = this.repo.create(data);
+    return this.repo.save(method);
   }
 
-  update(id: string, data: Partial<PaymentMethod>): PaymentMethod | null {
-    const method = this.methods.find((m) => m.id === id);
-    if (!method) return null;
-    Object.assign(method, data);
-    return method;
+  async update(
+    id: string,
+    data: Partial<PaymentMethod>,
+  ): Promise<PaymentMethod> {
+    const existing = await this.repo.findOneBy({ id });
+    if (!existing) throw new NotFoundException('Payment method not found');
+    Object.assign(existing, data);
+    return this.repo.save(existing);
   }
 
-  findAll(): PaymentMethod[] {
-    return this.methods;
+  async findAll(): Promise<PaymentMethod[]> {
+    return this.repo.find();
   }
 }
