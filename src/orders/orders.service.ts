@@ -3,10 +3,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
+import { OrderItem } from './entities/order-item.entity';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectRepository(Order) private repo: Repository<Order>) {}
+  constructor(
+    @InjectRepository(Order) private readonly repo: Repository<Order>,
+    @InjectRepository(Order) private readonly orderItem: Repository<OrderItem>,
+  ) {}
 
   async create(data: Partial<Order>): Promise<Order> {
     const order: Order = this.repo.create({
