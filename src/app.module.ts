@@ -11,6 +11,7 @@ import { User } from './users/entities/user.entity';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { PaymentMethod } from './payments/entities/payment.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PaymentMethod } from './payments/entities/payment.entity';
     UsersModule,
     OrdersModule,
     PaymentsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,35 +8,48 @@ import { Product } from './entities/product.entity';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  private useAuth(req: Request, res: Response, next: NextFunction) {
-    new AuthMiddleware().use(req, res, next);
-  }
+  // private useAuth(req: Request, res: Response, next: NextFunction) {
+  //   new AuthMiddleware().use(req, res, next);
+  // }
+
   @Get()
   GetAllProducts() {
     return this.productsService.findAll();
   }
 
   @Post()
-  create(@Req() req: Request, @Body() body: Partial<Product>) {
-    return new Promise((resolve) => {
-      this.useAuth(req, req.res, () => {
-        resolve(this.productsService.create(body));
-      });
-    });
+  create(@Body() body: Partial<Product>) {
+    return this.productsService.create(body);
   }
 
   @Put(':id')
-  update(
-    @Req() req: Request,
-    @Param('id') id: string,
-    @Body() body: Partial<Product>,
-  ) {
-    return new Promise((resolve, reject) => {
-      this.useAuth(req, req.res, () => {
-        const updated = this.productsService.update(id, body);
-        if (!updated) reject({ status: 404, message: 'Product not found' });
-        resolve(updated);
-      });
-    });
+  update(@Param('id') id: string, @Body() body: Partial<Product>) {
+    const updated = this.productsService.update(id, body);
+    if (!updated) throw new Error('Product not found'); // or use HttpException
+    return updated;
   }
+
+  // @Post()
+  // create(@Req() req: Request, @Body() body: Partial<Product>) {
+  //   return new Promise((resolve) => {
+  //     this.useAuth(req, req.res, () => {
+  //       resolve(this.productsService.create(body));
+  //     });
+  //   });
+  // }
+
+  // @Put(':id')
+  // update(
+  //   @Req() req: Request,
+  //   @Param('id') id: string,
+  //   @Body() body: Partial<Product>,
+  // ) {
+  //   return new Promise((resolve, reject) => {
+  //     this.useAuth(req, req.res, () => {
+  //       const updated = this.productsService.update(id, body);
+  //       if (!updated) reject({ status: 404, message: 'Product not found' });
+  //       resolve(updated);
+  //     });
+  //   });
+  // }
 }

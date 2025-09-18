@@ -6,6 +6,7 @@ dotenv.config();
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
+    // console.log(req.headers);
     const authHeader = req.headers['authorization'];
     const expected = `Bearer ${process.env.AUTH_TOKEN || 'mysecrettoken'}`;
     if (!authHeader || authHeader !== expected) {
