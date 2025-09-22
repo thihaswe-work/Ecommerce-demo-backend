@@ -1,25 +1,18 @@
-import { Address } from '../users/users.interface';
-// import { OrderItem } from './orders.interface';
-
 export interface OrderItem {
-  id: string;
-  productId: string;
+  id: number;
+  productId: number;
   productName: string;
-  productImage: string;
   quantity: number;
   price: number;
+  order: Order;
 }
 
 export interface Order {
-  id: string;
+  id: number;
   userId: string;
   items: OrderItem[];
-  subtotal: number;
-  shipping: number;
-  total: number;
+  totalAmount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  shippingAddress: Address;
-  paymentMethod: string;
   createdAt: Date;
   updatedAt: Date;
 }

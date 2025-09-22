@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Body, Param, Req } from '@nestjs/common';
+import { Controller, Post, Put, Body, Param, Req, Get } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './orders.interface';
 import { AuthMiddleware } from '../common/auth.middleware';
@@ -10,6 +10,15 @@ export class OrdersController {
 
   private useAuth(req: Request, res: Response, next: NextFunction) {
     new AuthMiddleware().use(req, res, next);
+  }
+
+  @Get()
+  getAll(@Req() req: Request) {
+    return this.ordersService.findAll();
+  }
+  @Get(':id')
+  getById(@Param('id') id: number) {
+    return this.ordersService.findById(id);
   }
 
   @Post()
@@ -24,7 +33,7 @@ export class OrdersController {
   @Put(':id')
   update(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() body: Partial<Order>,
   ) {
     return new Promise((resolve, reject) => {

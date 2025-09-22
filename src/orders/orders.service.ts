@@ -9,20 +9,20 @@ import { OrderItem } from './entities/order-item.entity';
 export class OrdersService {
   constructor(
     @InjectRepository(Order) private readonly repo: Repository<Order>,
-    @InjectRepository(Order) private readonly orderItem: Repository<OrderItem>,
+    @InjectRepository(OrderItem)
+    private readonly orderItem: Repository<OrderItem>,
   ) {}
 
   async create(data: Partial<Order>): Promise<Order> {
     const order: Order = this.repo.create({
       ...data,
-      id: uuid(),
       createdAt: new Date(),
       updatedAt: new Date(),
     });
     return this.repo.save(order);
   }
 
-  async update(id: string, data: Partial<Order>): Promise<Order> {
+  async update(id: number, data: Partial<Order>): Promise<Order> {
     const existing = await this.repo.findOneBy({ id });
     if (!existing) throw new NotFoundException('Order not found');
     Object.assign(existing, data);
@@ -30,6 +30,16 @@ export class OrdersService {
   }
 
   async findAll(): Promise<Order[]> {
-    return this.repo.find();
+    return this.repo.find({});
+  }
+  async findById(id: number): Promise<Order> {
+    const order = await this.repo.findOne({
+      where: { id },
+      relations: ['items'], // include OrderItems
+    });
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+    return order;
   }
 }

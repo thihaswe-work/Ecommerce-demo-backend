@@ -4,36 +4,26 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { OrderItem } from './order-item.entity';
 
 @Entity('orders')
 export class Order {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
-  userId: string;
+  userId?: string;
 
-  @Column('simple-json') // storing items as JSON for simplicity
-  items: any[];
+  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
+  items: OrderItem[];
 
-  @Column('float')
-  subtotal: number;
-
-  @Column('float')
-  shipping: number;
-
-  @Column('float')
-  total: number;
+  @Column('float', { default: 0 })
+  totalAmount: number;
 
   @Column({ type: 'varchar', length: 50, default: 'pending' })
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-
-  @Column('simple-json')
-  shippingAddress: any;
-
-  @Column()
-  paymentMethod: string;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

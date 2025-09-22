@@ -1,4 +1,13 @@
-import { Controller, Post, Put, Body, Param, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Put,
+  Body,
+  Param,
+  Req,
+  Get,
+  Delete,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthMiddleware } from '../common/auth.middleware';
 import type { Request, Response, NextFunction } from 'express';
@@ -23,10 +32,16 @@ export class ProductsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: Partial<Product>) {
+  update(@Param('id') id: number, @Body() body: Partial<Product>) {
     const updated = this.productsService.update(id, body);
     if (!updated) throw new Error('Product not found'); // or use HttpException
     return updated;
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    const deleted = this.productsService.delete(id);
+    return deleted;
   }
 
   // @Post()
