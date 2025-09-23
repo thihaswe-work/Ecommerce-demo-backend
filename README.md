@@ -1,98 +1,167 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Project README
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project demonstrates three different ways of handling authentication in a NestJS application:
 
-## Description
+1. AuthGuard – used for the orders routes (NestJS-native guard).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+2. Middleware – used for the products routes (classic Express-style middleware).
 
-## Project setup
+3. Manual middleware + Promise – used for users routes to demonstrate manual control of async flow inside controllers.
 
-```bash
-$ npm install
+### 1. AuthGuard (Orders Route)
+
+- File: src/common/auth.guard.ts
+
+```ts
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request } from 'express';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const req = context.switchToHttp().getRequest<Request>();
+    const authHeader = req.headers['authorization'];
+    const expected = `Bearer ${process.env.AUTH_TOKEN || 'mysecrettoken'}`;
+
+    if (!authHeader || authHeader !== expected) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    return true;
+  }
+}
 ```
 
-## Compile and run the project
+- Usuage in Controllers
 
-```bash
-# development
-$ npm run start
+```ts
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../guards/auth.guard';
+import { OrdersService } from './orders.service';
 
-# watch mode
-$ npm run start:dev
+@Controller('orders')
+export class OrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
 
-# production mode
-$ npm run start:prod
+  @Get()
+  @UseGuards(AuthGuard)
+  getAll() {
+    return this.ordersService.findAll();
+  }
+
+  @Post()
+  @UseGuards(AuthGuard)
+  create(@Body() body: any) {
+    return this.ordersService.create(body);
+  }
+}
 ```
 
-## Run tests
+✅ Benefits:
 
-```bash
-# unit tests
-$ npm run test
+- Controller code is clean, no manual Promise needed.
 
-# e2e tests
-$ npm run test:e2e
+- Unauthorized requests automatically throw 401.
 
-# test coverage
-$ npm run test:cov
+### 2. Middleware (Products Route)
+
+- File: src/middleware/auth.middleware.ts
+
+```ts
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    const authHeader = req.headers['authorization'];
+    const expected = `Bearer ${process.env.AUTH_TOKEN || 'mysecrettoken'}`;
+
+    if (!authHeader || authHeader !== expected) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    next();
+  }
+}
 ```
 
-## Deployment
+- Applied in products.module.ts:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```ts
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ProductsController } from './products.controller';
+import { AuthMiddleware } from '../middleware/auth.middleware';
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+@Module({
+  controllers: [ProductsController],
+})
+export class ProductsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes(ProductsController);
+  }
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+✅ Notes:
 
-## Resources
+- Works globally or per-controller/module.
 
-Check out a few resources that may come in handy when working with NestJS:
+- No need for Promise inside controllers.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 3. Manual Middleware + Promise (Users Route)
 
-## Support
+- Controller manually calls middleware and wraps in a Promise:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```ts
+@Post()
+createUser(@Req() req: Request, @Body() body: any) {
+  return new Promise((resolve) => {
+    new AuthMiddleware().use(req, req.res, () => {
+      resolve(this.usersService.create(body));
+    });
+  });
+}
+```
 
-## Stay in touch
+- Why Promise is used:
+  The controller waits until next() is called inside the middleware before executing the service call.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+✅ Notes:
 
-## License
+- Works for demonstration but not idiomatic NestJS.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- You must manually handle req, res, and next().
+
+### 4. (Optional) Apply globally
+
+- If you want this guard on every route (not just orders), register it in app.module.ts:
+
+```ts import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard';
+import { OrdersModule } from './orders/orders.module';
+
+@Module({
+  imports: [OrdersModule],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+Now, every request must include the correct token.
+
+✅ So, you put your code in src/common/auth.guard.ts and then import it wherever you need (@UseGuards(AuthGuard)).</br>
+so you don't have to use `@useGuards(authGuard)` everywhere.

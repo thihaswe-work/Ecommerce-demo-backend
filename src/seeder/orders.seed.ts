@@ -12,7 +12,7 @@ export const seedOrders = async (dataSource: DataSource) => {
 
   // create 5 orders
   for (let i = 1; i <= 5; i++) {
-    const userId = Math.random() > 0.5 ? `user-${i}` : 'guest_id';
+    const userId = Math.random() > 0.5 ? `user-${i}` : `guest_${i}`;
 
     const order = orderRepo.create({
       userId,

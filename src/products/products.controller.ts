@@ -7,11 +7,13 @@ import {
   Req,
   Get,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthMiddleware } from '../common/auth.middleware';
 import type { Request, Response, NextFunction } from 'express';
 import { Product } from './entities/product.entity';
+import { AuthGuard } from 'src/common/auth.guard';
 
 @Controller('products')
 export class ProductsController {

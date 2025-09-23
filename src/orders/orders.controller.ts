@@ -1,16 +1,22 @@
-import { Controller, Post, Put, Body, Param, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Put,
+  Body,
+  Param,
+  Req,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './orders.interface';
 import { AuthMiddleware } from '../common/auth.middleware';
 import type { Request, Response, NextFunction } from 'express';
+import { AuthGuard } from 'src/common/auth.guard';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
-
-  private useAuth(req: Request, res: Response, next: NextFunction) {
-    new AuthMiddleware().use(req, res, next);
-  }
 
   @Get()
   getAll(@Req() req: Request) {
@@ -22,26 +28,19 @@ export class OrdersController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Req() req: Request, @Body() body: Partial<Order>) {
-    return new Promise((resolve) => {
-      this.useAuth(req, req.res, () => {
-        resolve(this.ordersService.create(body));
-      });
-    });
+    return this.ordersService.create(body);
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   update(
     @Req() req: Request,
     @Param('id') id: number,
     @Body() body: Partial<Order>,
   ) {
-    return new Promise((resolve, reject) => {
-      this.useAuth(req, req.res, () => {
-        const updated = this.ordersService.update(id, body);
-        if (!updated) reject({ status: 404, message: 'Order not found' });
-        resolve(updated);
-      });
-    });
+    const updated = this.ordersService.update(id, body);
+    return updated;
   }
 }

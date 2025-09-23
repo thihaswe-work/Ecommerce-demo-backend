@@ -8,7 +8,7 @@ export class UsersService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   async create(data: Partial<User>): Promise<User> {
-    const u = this.repo.create(data);
+    const u = await this.repo.create(data);
     return this.repo.save(u);
   }
 
@@ -21,5 +21,17 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.repo.find();
+  }
+
+  async findById(id: string): Promise<User> {
+    return this.repo.findOneBy({ id });
+  }
+
+  async delete(id: string) {
+    const existing = await this.repo.findOneBy({ id });
+    if (!existing) {
+      throw new NotFoundException('Product not found');
+    }
+    return this.repo.delete(id);
   }
 }
