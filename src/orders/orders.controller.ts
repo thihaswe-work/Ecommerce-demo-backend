@@ -23,7 +23,7 @@ export class OrdersController {
     return this.ordersService.findAll();
   }
   @Get(':id')
-  getById(@Param('id') id: number) {
+  getById(@Param('id') id: string) {
     return this.ordersService.findById(id);
   }
 
@@ -37,7 +37,7 @@ export class OrdersController {
   @UseGuards(AuthGuard)
   update(
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() body: Partial<Order>,
   ) {
     const updated = this.ordersService.update(id, body);

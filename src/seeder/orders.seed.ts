@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { Order } from '../orders/entities/order.entity';
 import { OrderItem } from '../orders/entities/order-item.entity';
 import { Product } from '../products/entities/product.entity';
+import { seedUsers } from './users.seed';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);
@@ -9,10 +10,15 @@ export const seedOrders = async (dataSource: DataSource) => {
   const productRepo = dataSource.getRepository(Product);
 
   const products = await productRepo.find();
+  const users = await seedUsers(dataSource); // get created users
 
   // create 5 orders
   for (let i = 1; i <= 5; i++) {
-    const userId = Math.random() > 0.5 ? `user-${i}` : `guest_${i}`;
+    const isGuest = Math.random() > 0.5;
+
+    const userId = isGuest
+      ? `guest_${i}`
+      : users[Math.floor(Math.random() * users.length)].id;
 
     const order = orderRepo.create({
       userId,
@@ -29,7 +35,6 @@ export const seedOrders = async (dataSource: DataSource) => {
 
     for (let j = 0; j < itemsCount; j++) {
       const product = products[Math.floor(Math.random() * products.length)];
-
       const quantity = Math.floor(Math.random() * 5) + 1;
 
       const orderItem = orderItemRepo.create({

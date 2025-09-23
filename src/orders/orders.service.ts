@@ -22,7 +22,7 @@ export class OrdersService {
     return this.repo.save(order);
   }
 
-  async update(id: number, data: Partial<Order>): Promise<Order> {
+  async update(id: string, data: Partial<Order>): Promise<Order> {
     const existing = await this.repo.findOneBy({ id });
     if (!existing) throw new NotFoundException('Order not found');
     Object.assign(existing, data);
@@ -32,7 +32,7 @@ export class OrdersService {
   async findAll(): Promise<Order[]> {
     return this.repo.find({});
   }
-  async findById(id: number): Promise<Order> {
+  async findById(id: string): Promise<Order> {
     const order = await this.repo.findOne({
       where: { id },
       relations: ['items'], // include OrderItems

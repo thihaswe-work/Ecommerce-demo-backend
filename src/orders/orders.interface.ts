@@ -8,7 +8,7 @@ export interface OrderItem {
 }
 
 export interface Order {
-  id: number;
+  id: string;
   userId: string;
   items: OrderItem[];
   totalAmount: number;
