@@ -11,7 +11,8 @@ export const seedUsers = async (dataSource: DataSource) => {
     const user = userRepo.create({
       name: `User ${i}`,
       email: `user${i}@example.com`,
-      avatar: `https://i.pravatar.cc/150?img=${i}`, // optional avatar
+      avatar: `https://i.pravatar.cc/150?img=${i}`,
+      password: 'password', // optional avatar
     });
 
     await userRepo.save(user);

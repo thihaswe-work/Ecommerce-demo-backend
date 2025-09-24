@@ -4,6 +4,7 @@ export interface User {
   email: string;
   avatar?: string;
   createdAt: Date;
+  password?: string;
 }
 
 export interface Address {

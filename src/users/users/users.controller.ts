@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './users.interface';
-import { AuthMiddleware } from '../common/auth.middleware';
+import { AuthMiddleware } from '../../common/auth.middleware';
 import type { Request, Response, NextFunction } from 'express';
 
 @Controller('users')
@@ -25,25 +25,11 @@ export class UsersController {
   @Get()
   findAll(@Req() req: Request) {
     return new Promise((resolve, reject) => {
-      this.useAuth(req, req.res, () => {
-        const users = this.usersService.findAll();
+      this.useAuth(req, req.res, async () => {
+        const users = await this.usersService.findAll();
         resolve(users);
       });
     });
-  }
-
-  @Post()
-  create(@Req() req: Request, @Body() body: Partial<User>) {
-    return this.usersService.create(body);
-  }
-
-  // custom middleware (users.middleware.ts)
-  @Put('me')
-  async updateCurrentUser(@Req() req: Request, @Body() body: Partial<User>) {
-    const user = (req as any).user; // from middleware
-    const updated = await this.usersService.update(user.id, body);
-    if (!updated) throw { status: 404, message: 'User not found' };
-    return updated;
   }
 
   @Put(':id')
@@ -62,7 +48,7 @@ export class UsersController {
     });
   }
 
-  // Do not Delte it !!important to look back
+  // Do not Delete it !!important to look back
   // @Put(':id')
   // update(
   //   @Req() req: Request,
