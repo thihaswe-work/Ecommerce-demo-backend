@@ -1,11 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
+import { GlobalExceptionFilter } from './filerAndInterceptors/http-exception.filter';
+import { LoggingInterceptor } from './filerAndInterceptors/http-interceptor';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Apply global filter
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // Apply global interceptors
+  // app.useGlobalInterceptors(new LoggingInterceptor());
+
   app.enableCors({
     origin: ['http://localhost:5173', 'http://localhost:3000'], // your frontend URL
     credentials: true, // allow cookies/auth headers
@@ -16,4 +25,5 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Server running at http://localhost:${port}`);
 }
+
 bootstrap();

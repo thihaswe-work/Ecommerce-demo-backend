@@ -6,40 +6,74 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
+import { Address } from '../entities/address.entity';
 
 @Injectable()
 export class MeService {
-  constructor(@InjectRepository(User) private repo: Repository<User>) {}
-  async islogin(token?: string): Promise<User | null> {
+  constructor(
+    @InjectRepository(User) private repo: Repository<User>,
+    @InjectRepository(Address) private addressRepo: Repository<Address>,
+  ) {}
+  async islogin(
+    token?: string,
+  ): Promise<{ user: User; newToken?: string } | null> {
     // In real app, verify JWT. For now, we just check the token string
-    if (!token || token !== 'myUserToken') {
-      return null;
-    }
+    if (!token) throw new UnauthorizedException('Unauthorized');
 
+    let payload: any;
+    let newToken: string | undefined;
+
+    try {
+      payload = jwt.verify(token, process.env.JWT_USER_SECRET || 'user-secret');
+    } catch (err: any) {
+      // Check if token is expired
+      if (err.name === 'TokenExpiredError') {
+        // Decode the old token without verifying to get payload
+        payload = jwt.decode(token);
+
+        if (!payload || typeof payload === 'string') {
+          throw new UnauthorizedException('Unauthorized');
+        }
+
+        // Generate a new token
+        newToken = jwt.sign(
+          { id: payload.id, email: payload.email },
+          process.env.JWT_USER_SECRET || 'user-secret',
+          { expiresIn: '1h' }, // set your desired expiration
+        );
+      } else {
+        throw new UnauthorizedException('Unauthorized');
+      }
+    }
     // Return a sample user, you can fetch actual user if you store userId in JWT
-    const user = await this.repo.findOneBy({ email: 'user1@example.com' }); // example
+    const user = await this.repo.findOneBy({ email: payload.email }); // example
 
     if (!user) {
       throw new UnauthorizedException('Not logged in');
     }
-    return user;
+
+    return { user, newToken };
   }
 
-  login(email: string, password: string): { user: User; token: string } {
-    const user = {
-      id: '9aed99d1-a172-4e90-b807-eafe2c6fdc6e',
-      name: 'User 1',
-      password: 'password',
-      email: 'user1@example.com',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      createdAt: new Date('2025-09-24T04:51:16.604Z'), // <-- Date object
-    };
+  async login(
+    email: string,
+    password: string,
+    remember: boolean,
+  ): Promise<{ user: User; token: string }> {
+    const user = await this.repo.findOneBy({ email });
 
-    // if (user.password !== password) {
-    //   throw new UnauthorizedException('Wrong Credentials');
-    // }
+    if (!user) throw new Error('Email is Incorrect');
+    if (user.password !== password) {
+      throw new UnauthorizedException('Wrong Credentials');
+    }
 
-    const token = 'myUserToken';
+    // const token = 'myUserToken';
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_USER_SECRET || 'user-secret',
+      { expiresIn: '1s' },
+    );
 
     // TODO: generate JWT in real app
 

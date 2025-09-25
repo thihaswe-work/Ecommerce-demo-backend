@@ -17,23 +17,38 @@ export class MeController {
   @Get()
   async islogin(@Req() req: Request) {
     const rawCookie = req.headers.cookie;
+
     const token = rawCookie
       ?.split(';')
       .map((c) => c.trim())
       .find((c) => c.startsWith('token='))
       ?.split('=')[1];
-    console.log(rawCookie);
-    const user = await this.meService.islogin(token);
+    const { user, newToken } = await this.meService.islogin(token);
+
+    // res.cookie('token', 'hello', {
+    //   httpOnly: true,
+    //   sameSite: 'lax',
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
 
     if (!user) {
       return new NotFoundException('User Not Found');
     }
-    return { user };
+
+    const { password: _, ...safeUser } = user;
+    return { user: safeUser }; // return res
+    //   .status(HttpStatus.OK)
+    //   .json({ message: 'Logged in', user: safeUser });
   }
+
   @Post('login')
   async login(@Res() res: Response, @Body() body) {
-    const { email, password } = body;
-    const { user, token } = await this.meService.login(email, password);
+    const { email, password, remember } = body;
+    const { user, token } = await this.meService.login(
+      email,
+      password,
+      remember,
+    );
 
     res.cookie('token', token, {
       httpOnly: true,
