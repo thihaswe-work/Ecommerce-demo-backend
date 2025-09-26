@@ -8,6 +8,9 @@ import { seedProducts } from './products.seed';
 import { seedOrders } from './orders.seed';
 import { User } from 'src/users/entities/user.entity';
 import { seedUsers } from './users.seed';
+import { seedAddresses } from './addresses.seed';
+import { PaymentMethod } from 'src/users/entities/payment-method.entity';
+import { seedPaymentMethods } from './payment.seed';
 
 @Injectable()
 export class SeederService {
@@ -25,7 +28,25 @@ export class SeederService {
     if (orderCount === 0) await seedOrders(this.dataSource);
 
     const userCount = await this.dataSource.getRepository(User).count();
-    if (userCount === 0) await seedUsers(this.dataSource);
+    let users: User[] = [];
+    if (userCount === 0) {
+      users = await seedUsers(this.dataSource);
+    } else {
+      users = await this.dataSource.getRepository(User).find();
+    }
+
+    // Seed addresses after users
+    const addressCount = await this.dataSource.getRepository('Address').count();
+    if (addressCount === 0) {
+      await seedAddresses(this.dataSource, users);
+    }
+
+    const paymentCount = await this.dataSource
+      .getRepository(PaymentMethod)
+      .count();
+    if (paymentCount === 0) {
+      await seedPaymentMethods(this.dataSource, users);
+    }
     console.log('database seeded');
     return { message: 'Database seeded successfully' };
   }

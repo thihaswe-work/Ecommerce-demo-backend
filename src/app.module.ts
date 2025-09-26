@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsModule } from './products/products.module';
-import { UsersModule } from './users/users/users.module';
-import { OrdersModule } from './orders/orders.module';
-import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { AppDataSource } from './data-source';
+import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
 import { SeederModule } from './seeder/seeder.module';
+import { UsersModule } from './users/users/users.module';
+import { PaymentsModule } from './users/payments/payments.module';
 
 @Module({
   imports: [
@@ -16,9 +16,9 @@ import { SeederModule } from './seeder/seeder.module';
     ProductsModule,
     UsersModule,
     OrdersModule,
-    PaymentsModule,
     AuthModule,
     SeederModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

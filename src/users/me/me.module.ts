@@ -2,7 +2,12 @@ import { MeController } from './me.controller';
 import { MeService } from './me.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { MeMiddleware } from './me.middleware';
 import { Address } from '../entities/address.entity';
 
@@ -13,6 +18,6 @@ import { Address } from '../entities/address.entity';
 })
 export class MeModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(MeMiddleware).forRoutes('/me'); // Only protect /users/me
+    // consumer.apply(MeMiddleware).forRoutes('me'); // Only protect /users/me
   }
 }

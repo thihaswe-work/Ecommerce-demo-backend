@@ -1,15 +1,20 @@
-import { Controller, Post, Put, Body, Param, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
+import type { NextFunction, Request, Response } from 'express';
 import { PaymentsService } from './payments.service';
 import { PaymentMethod } from './payments.interface';
-import { AuthMiddleware } from '../common/auth.middleware';
-import type { Request, Response, NextFunction } from 'express';
+import { MeMiddleware } from 'src/users/me/me.middleware';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   private useAuth(req: Request, res: Response, next: NextFunction) {
-    new AuthMiddleware().use(req, res, next);
+    new MeMiddleware().use(req, res, next);
+  }
+
+  @Get()
+  FindAll(@Req() req: Request) {
+    return this.paymentsService.findAll();
   }
 
   @Post()
@@ -24,7 +29,7 @@ export class PaymentsController {
   @Put(':id')
   update(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() body: Partial<PaymentMethod>,
   ) {
     return new Promise((resolve, reject) => {

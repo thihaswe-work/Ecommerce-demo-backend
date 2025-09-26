@@ -27,20 +27,17 @@ export class MeService {
     try {
       payload = jwt.verify(token, process.env.JWT_USER_SECRET || 'user-secret');
     } catch (err: any) {
-      // Check if token is expired
       if (err.name === 'TokenExpiredError') {
-        // Decode the old token without verifying to get payload
         payload = jwt.decode(token);
 
         if (!payload || typeof payload === 'string') {
           throw new UnauthorizedException('Unauthorized');
         }
 
-        // Generate a new token
         newToken = jwt.sign(
           { id: payload.id, email: payload.email },
           process.env.JWT_USER_SECRET || 'user-secret',
-          { expiresIn: '1h' }, // set your desired expiration
+          { expiresIn: '7d' },
         );
       } else {
         throw new UnauthorizedException('Unauthorized');
@@ -72,10 +69,8 @@ export class MeService {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_USER_SECRET || 'user-secret',
-      { expiresIn: '1s' },
+      { expiresIn: remember ? '30d' : '1d' },
     );
-
-    // TODO: generate JWT in real app
 
     return { user, token };
   }
