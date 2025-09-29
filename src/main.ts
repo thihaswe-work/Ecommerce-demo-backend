@@ -10,20 +10,22 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Apply global filter
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  // app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Apply global interceptors
   // app.useGlobalInterceptors(new LoggingInterceptor());
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'], // your frontend URL
+    origin: [process.env.USER_URL, process.env.ADMIN_URL], // your frontend URL
     credentials: true, // allow cookies/auth headers
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
   await app.listen(port);
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(
+    `Server running at http://${process.env.DB_HOST || 'localhost'}:${port}`,
+  );
 }
 
 bootstrap();

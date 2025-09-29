@@ -17,25 +17,25 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Default values
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
-    // let messageCode = 1; Custom Added to the exception filer
+    let messageCode = 1; // Custom Added to the exception filer
 
     // Handle HttpException separately
     if (exception instanceof HttpException) {
       console.log('exception instance', exception);
       status = exception.getStatus();
-      // messageCode = 40; Custom Added to the exception filer
+      messageCode = 40; // Custom Added to the exception filer
       message = exception.getResponse() as any;
     }
 
     // Log error to console (optional)
-    // console.error('GlobalExceptionFilter:', exception);
+    console.error('GlobalExceptionFilter:', exception);
 
     // Send structured JSON response
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      // messageCode, Custom Added to the exception filer
+      messageCode, // Custom Added to the exception filer
       message,
     });
   }

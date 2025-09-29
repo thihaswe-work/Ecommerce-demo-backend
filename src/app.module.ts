@@ -9,6 +9,7 @@ import { ProductsModule } from './products/products.module';
 import { SeederModule } from './seeder/seeder.module';
 import { UsersModule } from './users/users/users.module';
 import { PaymentsModule } from './users/payments/payments.module';
+import { AddressModule } from './users/addresses/addresses.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PaymentsModule } from './users/payments/payments.module';
     AuthModule,
     SeederModule,
     PaymentsModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [AppService],
