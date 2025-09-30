@@ -7,10 +7,12 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
 import { Address } from 'src/users/entities/address.entity';
 import { PaymentMethod } from 'src/users/entities/payment-method.entity';
+import { Contact } from 'src/users/entities/contact.entity';
 
 @Entity('orders')
 export class Order {
@@ -57,4 +59,8 @@ export class Order {
 
   @Column()
   paymentMethodId: number;
+
+  @OneToOne(() => Contact)
+  @JoinColumn()
+  contact: Contact;
 }
