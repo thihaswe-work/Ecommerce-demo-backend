@@ -29,17 +29,13 @@ export class OrdersController {
 
   @Post()
   @UseGuards(AuthGuard)
-  create(@Req() req: Request, @Body() body: Partial<Order>) {
+  create(@Req() req: Request, @Body() body: any) {
     return this.ordersService.create(body);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard)
-  update(
-    @Req() req: Request,
-    @Param('id') id: string,
-    @Body() body: Partial<Order>,
-  ) {
+  update(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
     const updated = this.ordersService.update(id, body);
     return updated;
   }

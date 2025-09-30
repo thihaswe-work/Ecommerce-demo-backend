@@ -1,35 +1,56 @@
+import { OrderItem } from 'src/orders/entities/order-item.entity';
+import { Order } from 'src/orders/entities/order.entity';
+import { Product } from 'src/products/entities/product.entity';
+import { Address } from 'src/users/entities/address.entity';
+import { PaymentMethod } from 'src/users/entities/payment-method.entity';
 import { DataSource } from 'typeorm';
-import { Order } from '../orders/entities/order.entity';
-import { OrderItem } from '../orders/entities/order-item.entity';
-import { Product } from '../products/entities/product.entity';
 import { seedUsers } from './users.seed';
+import { User } from 'src/users/entities/user.entity';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);
   const orderItemRepo = dataSource.getRepository(OrderItem);
   const productRepo = dataSource.getRepository(Product);
+  const addressRepo = dataSource.getRepository(Address);
+  const paymentRepo = dataSource.getRepository(PaymentMethod);
+  const userRepo = dataSource.getRepository(User);
 
   const products = await productRepo.find();
-  const users = await seedUsers(dataSource); // get created users
+  const users = await userRepo.find();
 
-  // create 5 orders
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 15; i++) {
     const isGuest = Math.random() > 0.5;
+    const user = isGuest
+      ? null
+      : users[Math.floor(Math.random() * users.length)];
 
-    const userId = isGuest
-      ? `guest_${i}`
-      : users[Math.floor(Math.random() * users.length)].id;
+    // get random address and payment method for the user
+    let shippingAddressId: number | null = null;
+    let paymentMethodId: number | null = null;
+
+    if (user) {
+      const addresses = await addressRepo.find({ where: { userId: user.id } });
+      if (addresses.length)
+        shippingAddressId =
+          addresses[Math.floor(Math.random() * addresses.length)].id;
+
+      const payments = await paymentRepo.find({ where: { userId: user.id } });
+      if (payments.length)
+        paymentMethodId =
+          payments[Math.floor(Math.random() * payments.length)].id;
+    }
 
     const order = orderRepo.create({
-      userId,
-      totalAmount: 0,
+      userId: user?.id ?? `guest_${i}`,
+      total: 0,
       status: 'pending',
+      shippingAddressId: shippingAddressId ?? 1, // fallback
+      paymentMethodId: paymentMethodId ?? 1, // fallback
       items: [],
     });
 
     await orderRepo.save(order);
 
-    // add 1-3 items per order
     const itemsCount = Math.floor(Math.random() * 3) + 1;
     let total = 0;
 
@@ -41,6 +62,7 @@ export const seedOrders = async (dataSource: DataSource) => {
         productId: product.id,
         productName: product.name,
         quantity,
+        productImage: product.image,
         price: product.price,
         order: order,
       });
@@ -51,7 +73,7 @@ export const seedOrders = async (dataSource: DataSource) => {
       order.items.push(orderItem);
     }
 
-    order.totalAmount = total;
+    order.total = total;
     await orderRepo.save(order);
   }
 

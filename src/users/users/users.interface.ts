@@ -4,12 +4,13 @@ export interface User {
   email: string;
   avatar?: string;
   createdAt: Date;
+  updatedAt: Date;
   password?: string;
 }
 
-export interface Address {
-  id: string;
-  street?: string;
-  city: string;
-  country: string;
-}
+// export interface Address {
+//   id: string;
+//   street?: string;
+//   city: string;
+//   country: string;
+// }

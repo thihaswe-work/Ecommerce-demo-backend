@@ -22,6 +22,9 @@ export class OrderItem {
   @Column()
   productName: string;
 
+  @Column()
+  productImage: string;
+
   @Column('int')
   quantity: number;
 

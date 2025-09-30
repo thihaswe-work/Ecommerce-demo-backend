@@ -5,8 +5,10 @@ import {
   ManyToOne,
   CreateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Entity('addresses')
 export class Address {
@@ -14,7 +16,7 @@ export class Address {
   id: number;
 
   @Column({ length: 50 })
-  type: string; // e.g., "shipping" or "billing"
+  type: 'shipping' | 'billing';
 
   @Column({ length: 255 })
   firstName: string;
@@ -42,6 +44,10 @@ export class Address {
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
+
+  // Relationship with orders
+  @OneToMany(() => Order, (order) => order.shippingAddress)
+  orders: Order[];
 
   // Relationship with User
   @ManyToOne(() => User, (user) => user.addresses, { onDelete: 'CASCADE' })

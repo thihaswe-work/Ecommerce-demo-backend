@@ -10,18 +10,17 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { MeService } from './me.service';
+import { getToken } from 'src/common/lib';
+import { User } from '../users/users.interface';
 
 @Controller('me')
 export class MeController {
   constructor(private readonly meService: MeService) {}
+
   @Get()
   async islogin(@Req() req: Request, @Res() res: Response) {
     const rawCookie = req.headers.cookie;
-    const token = rawCookie
-      ?.split(';')
-      .map((c) => c.trim())
-      .find((c) => c.startsWith('token='))
-      ?.split('=')[1];
+    const token = getToken(rawCookie);
     const { user, newToken } = await this.meService.islogin(token);
 
     if (newToken) {
@@ -41,6 +40,13 @@ export class MeController {
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Logged in', user: safeUser });
+  }
+
+  @Get('profile')
+  async profile(@Req() req: any, @Res() res: Response) {
+    const { user } = req;
+    const data = await this.meService.profile(user.id);
+    res.status(200).json(data);
   }
 
   @Post('login')

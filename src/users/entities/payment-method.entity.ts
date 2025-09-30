@@ -5,8 +5,10 @@ import {
   ManyToOne,
   CreateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Entity('payment_methods')
 export class PaymentMethod {
@@ -33,6 +35,10 @@ export class PaymentMethod {
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
+
+  // Relationship with orders
+  @OneToMany(() => Order, (order) => order.paymentMethod)
+  orders: Order[];
 
   @ManyToOne(() => User, (user) => user.paymentMethods, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' }) // <-- explicitly create the column

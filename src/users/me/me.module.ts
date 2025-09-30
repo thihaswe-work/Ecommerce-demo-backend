@@ -10,14 +10,26 @@ import {
 } from '@nestjs/common';
 import { MeMiddleware } from './me.middleware';
 import { Address } from '../entities/address.entity';
+import { Router } from 'express';
+import { PaymentMethod } from '../entities/payment-method.entity';
+import { Order } from 'src/orders/entities/order.entity';
+import { OrderItem } from 'src/orders/entities/order-item.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Address])],
+  imports: [
+    TypeOrmModule.forFeature([User, Address, PaymentMethod, Order, OrderItem]),
+  ],
   controllers: [MeController],
   providers: [MeService],
 })
 export class MeModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(MeMiddleware).forRoutes('me'); // Only protect /users/me
+    consumer
+      .apply(MeMiddleware)
+      .forRoutes(
+        { path: 'me', method: RequestMethod.PUT },
+        { path: 'me', method: RequestMethod.DELETE },
+        { path: 'me/profile', method: RequestMethod.GET },
+      ); // Only protect /users/me
   }
 }

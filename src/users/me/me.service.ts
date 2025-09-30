@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,13 +9,22 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import { Address } from '../entities/address.entity';
+import { PaymentMethod } from '../entities/payment-method.entity';
+import { Order } from 'src/orders/entities/order.entity';
+import { OrderItem } from 'src/orders/entities/order-item.entity';
 
 @Injectable()
 export class MeService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
     @InjectRepository(Address) private addressRepo: Repository<Address>,
+    @InjectRepository(PaymentMethod)
+    private paymentMethodRepo: Repository<PaymentMethod>,
+    @InjectRepository(Order) private readonly orderRepo: Repository<Order>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepo: Repository<OrderItem>,
   ) {}
+
   async islogin(
     token?: string,
   ): Promise<{ user: User; newToken?: string } | null> {
@@ -73,5 +83,18 @@ export class MeService {
     );
 
     return { user, token };
+  }
+
+  async profile(userId: string) {
+    try {
+      const address = await this.addressRepo.findBy({ userId });
+      const paymentMethod = await this.paymentMethodRepo.findBy({ userId });
+      const orders = await this.orderRepo.findBy({ userId });
+
+      return { address, paymentMethod, orders };
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      throw new InternalServerErrorException('Failed to fetch user profile');
+    }
   }
 }

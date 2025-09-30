@@ -11,43 +11,51 @@ import { seedUsers } from './users.seed';
 import { seedAddresses } from './addresses.seed';
 import { PaymentMethod } from 'src/users/entities/payment-method.entity';
 import { seedPaymentMethods } from './payment.seed';
-
+import { Address } from 'src/users/entities/address.entity';
 @Injectable()
 export class SeederService {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async seedDatabase() {
-    // Use the injected dataSource; no need to initialize or new DataSource()
-    await this.dataSource.dropDatabase(); // DEV only
+    // DEV only: wipe everything
+    await this.dataSource.dropDatabase();
     await this.dataSource.synchronize();
 
-    const productCount = await this.dataSource.getRepository(Product).count();
-    if (productCount === 0) await seedProducts(this.dataSource);
+    const productRepo = this.dataSource.getRepository(Product);
+    const userRepo = this.dataSource.getRepository(User);
+    const addressRepo = this.dataSource.getRepository(Address);
+    const paymentRepo = this.dataSource.getRepository(PaymentMethod);
+    const orderRepo = this.dataSource.getRepository(Order);
 
-    const orderCount = await this.dataSource.getRepository(Order).count();
-    if (orderCount === 0) await seedOrders(this.dataSource);
-
-    const userCount = await this.dataSource.getRepository(User).count();
-    let users: User[] = [];
-    if (userCount === 0) {
-      users = await seedUsers(this.dataSource);
-    } else {
-      users = await this.dataSource.getRepository(User).find();
+    // Products
+    if ((await productRepo.count()) === 0) {
+      await seedProducts(this.dataSource);
     }
 
-    // Seed addresses after users
-    const addressCount = await this.dataSource.getRepository('Address').count();
-    if (addressCount === 0) {
+    // Users
+    let users: User[];
+    if ((await userRepo.count()) === 0) {
+      users = await seedUsers(this.dataSource);
+    } else {
+      users = await userRepo.find();
+    }
+
+    // Addresses
+    if ((await addressRepo.count()) === 0) {
       await seedAddresses(this.dataSource, users);
     }
 
-    const paymentCount = await this.dataSource
-      .getRepository(PaymentMethod)
-      .count();
-    if (paymentCount === 0) {
+    // Payments
+    if ((await paymentRepo.count()) === 0) {
       await seedPaymentMethods(this.dataSource, users);
     }
-    console.log('database seeded');
+
+    // Orders
+    if ((await orderRepo.count()) === 0) {
+      await seedOrders(this.dataSource);
+    }
+
+    console.log('✅ Database seeded successfully');
     return { message: 'Database seeded successfully' };
   }
 }

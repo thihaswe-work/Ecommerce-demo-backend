@@ -1,6 +1,6 @@
 export interface Address {
   id: number;
-  type: string; // "shipping" | "billing"
+  type: 'shipping' | 'billing';
   firstName: string;
   lastName: string;
   address: string;
