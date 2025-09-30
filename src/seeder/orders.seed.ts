@@ -6,15 +6,15 @@ import { PaymentMethod } from 'src/users/entities/payment-method.entity';
 import { DataSource } from 'typeorm';
 import { seedUsers } from './users.seed';
 import { User } from 'src/users/entities/user.entity';
+import { Contact } from 'src/users/entities/contact.entity';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);
-  const orderItemRepo = dataSource.getRepository(OrderItem);
   const productRepo = dataSource.getRepository(Product);
   const addressRepo = dataSource.getRepository(Address);
   const paymentRepo = dataSource.getRepository(PaymentMethod);
   const userRepo = dataSource.getRepository(User);
-
+  const contactRepo = dataSource.getRepository(Contact);
   const products = await productRepo.find();
   const users = await userRepo.find();
 
@@ -40,17 +40,17 @@ export const seedOrders = async (dataSource: DataSource) => {
           payments[Math.floor(Math.random() * payments.length)].id;
     }
 
+    // Create the order
     const order = orderRepo.create({
       userId: user?.id ?? `guest_${i}`,
       total: 0,
       status: 'pending',
-      shippingAddressId: shippingAddressId ?? 1, // fallback
-      paymentMethodId: paymentMethodId ?? 1, // fallback
+      shippingAddressId: shippingAddressId ?? 1,
+      paymentMethodId: paymentMethodId ?? 1,
       items: [],
     });
 
-    await orderRepo.save(order);
-
+    // Create order items and add them to the order
     const itemsCount = Math.floor(Math.random() * 3) + 1;
     let total = 0;
 
@@ -58,22 +58,30 @@ export const seedOrders = async (dataSource: DataSource) => {
       const product = products[Math.floor(Math.random() * products.length)];
       const quantity = Math.floor(Math.random() * 5) + 1;
 
-      const orderItem = orderItemRepo.create({
+      const orderItem = orderRepo.manager.create(OrderItem, {
         productId: product.id,
         productName: product.name,
         quantity,
         productImage: product.image,
         price: product.price,
-        order: order,
       });
 
       total += orderItem.price * orderItem.quantity;
-
-      await orderItemRepo.save(orderItem);
       order.items.push(orderItem);
     }
 
     order.total = total;
+
+    // Create contact and attach to order
+    const contact = contactRepo.create({
+      name: user?.name ?? `Guest ${i}`,
+      phone: 1234567890,
+      order: order, // link contact to order
+    });
+
+    order.contact = contact;
+
+    // Save everything at once
     await orderRepo.save(order);
   }
 

@@ -19,4 +19,8 @@ export class Contact {
 
   @Column()
   phone: number;
+
+  @OneToOne(() => Order, (order) => order.contact)
+  @JoinColumn() // Contact owns the foreign key
+  order: Order;
 }

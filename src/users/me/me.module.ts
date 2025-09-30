@@ -14,10 +14,18 @@ import { Router } from 'express';
 import { PaymentMethod } from '../entities/payment-method.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { OrderItem } from 'src/orders/entities/order-item.entity';
+import { Contact } from '../entities/contact.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Address, PaymentMethod, Order, OrderItem]),
+    TypeOrmModule.forFeature([
+      User,
+      Address,
+      PaymentMethod,
+      Order,
+      OrderItem,
+      Contact,
+    ]),
   ],
   controllers: [MeController],
   providers: [MeService],

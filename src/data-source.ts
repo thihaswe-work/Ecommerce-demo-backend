@@ -7,6 +7,7 @@ import { Product } from './products/entities/product.entity';
 import { Address } from './users/entities/address.entity';
 import { PaymentMethod } from './users/entities/payment-method.entity';
 import { User } from './users/entities/user.entity';
+import { Contact } from './users/entities/contact.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -15,7 +16,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'ecommerce',
-  entities: [Product, User, Order, OrderItem, Address, PaymentMethod],
+  entities: [Product, User, Order, OrderItem, Address, PaymentMethod, Contact],
   synchronize: true, // DEV only: auto-create tables. Disable in production.
   logging: false,
 });

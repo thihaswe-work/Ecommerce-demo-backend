@@ -60,7 +60,9 @@ export class Order {
   @Column()
   paymentMethodId: number;
 
-  @OneToOne(() => Contact)
-  @JoinColumn()
+  @OneToOne(() => Contact, (contact) => contact.order, {
+    cascade: true,
+    eager: true,
+  })
   contact: Contact;
 }
