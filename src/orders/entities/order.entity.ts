@@ -28,6 +28,14 @@ export class Order {
   })
   items: OrderItem[];
 
+  @Column({ length: 50 })
+  paymentType: 'card' | 'paypal';
+
+  @Column('float', { default: 0 })
+  subtotal: number;
+  @Column('float', { default: 0 })
+  shipping: number;
+
   @Column('float', { default: 0 })
   total: number;
 

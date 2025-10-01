@@ -1,5 +1,3 @@
-import { OrderItem } from 'src/orders/entities/order-item.entity';
-import { Order } from 'src/orders/entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { Address } from 'src/users/entities/address.entity';
 import { PaymentMethod } from 'src/users/entities/payment-method.entity';
@@ -7,6 +5,8 @@ import { DataSource } from 'typeorm';
 import { seedUsers } from './users.seed';
 import { User } from 'src/users/entities/user.entity';
 import { Contact } from 'src/users/entities/contact.entity';
+import { Order } from 'src/orders/entities/order.entity';
+import { OrderItem } from 'src/orders/entities/order-item.entity';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);
@@ -43,16 +43,21 @@ export const seedOrders = async (dataSource: DataSource) => {
     // Create the order
     const order = orderRepo.create({
       userId: user?.id ?? `guest_${i}`,
+      subtotal: 0,
+      paymentType: 'card',
+      shipping: 0,
       total: 0,
       status: 'pending',
       shippingAddressId: shippingAddressId ?? 1,
       paymentMethodId: paymentMethodId ?? 1,
       items: [],
+      contact: undefined,
     });
 
     // Create order items and add them to the order
     const itemsCount = Math.floor(Math.random() * 3) + 1;
-    let total = 0;
+    let subtotal = 0;
+    let shipping = 0;
 
     for (let j = 0; j < itemsCount; j++) {
       const product = products[Math.floor(Math.random() * products.length)];
@@ -66,23 +71,36 @@ export const seedOrders = async (dataSource: DataSource) => {
         price: product.price,
       });
 
-      total += orderItem.price * orderItem.quantity;
+      subtotal += orderItem.price * orderItem.quantity;
       order.items.push(orderItem);
     }
 
-    order.total = total;
+    order.subtotal = subtotal;
+
+    if (subtotal < 100) shipping = 50;
+
+    order.total = shipping + subtotal;
 
     // Create contact and attach to order
-    const contact = contactRepo.create({
+    const contact = orderRepo.manager.create(Contact, {
       name: user?.name ?? `Guest ${i}`,
       phone: 1234567890,
-      order: order, // link contact to order
-    });
 
+      // need this line If i don't put cascade true at the end of relation in orderTable
+      // order: order, // link contact to order
+    });
     order.contact = contact;
 
     // Save everything at once
     await orderRepo.save(order);
+
+    // If i don't put cascade true at the end of relation in orderTable order repo will not be saved
+    // // Save everything at once
+    // const savedOrder = await orderRepo.save(order);
+
+    // // Save contact manually
+    // contact.order = savedOrder;
+    // await contactRepo.save(contact);
   }
 
   console.log('Orders seeded successfully!');

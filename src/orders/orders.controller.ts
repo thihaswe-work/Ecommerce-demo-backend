@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './orders.interface';
-import { AuthMiddleware } from '../common/auth.middleware';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthGuard } from 'src/common/auth.guard';
 

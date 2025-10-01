@@ -9,7 +9,7 @@
 // }
 export interface PaymentMethod {
   id: number;
-  type: string; // e.g., "card", "paypal", etc.
+  // type: 'card' | 'paypal'; // e.g., "card", "paypal", etc.
   cardLast4?: string;
   cardBrand?: string;
   expiryMonth?: number;

@@ -15,7 +15,7 @@ export const seedPaymentMethods = async (
 
     for (let i = 1; i <= numMethods; i++) {
       const method = paymentRepo.create({
-        type: 'card',
+        // type: 'card',
         cardBrand: i === 1 ? 'Visa' : 'Mastercard',
         cardLast4: i === 1 ? '4242' : '5555',
         expiryMonth: 12,

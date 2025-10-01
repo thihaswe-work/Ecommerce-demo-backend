@@ -15,8 +15,8 @@ export class PaymentMethod {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50 })
-  type: string; // e.g., "card", "paypal", etc.
+  // @Column({ length: 50 })
+  // paymentType: 'card' | 'paypal'; // e.g., "card", "paypal", etc.
 
   @Column({ length: 20, nullable: true })
   cardLast4?: string;

@@ -11,8 +11,8 @@ import {
 
 @Entity('contact')
 export class Contact {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 255 })
   name: string;
@@ -21,6 +21,6 @@ export class Contact {
   phone: number;
 
   @OneToOne(() => Order, (order) => order.contact)
-  @JoinColumn() // Contact owns the foreign key
+  @JoinColumn({ name: 'order_id' }) // Contact owns the foreign key
   order: Order;
 }

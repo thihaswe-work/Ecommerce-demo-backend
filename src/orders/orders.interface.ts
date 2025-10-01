@@ -13,8 +13,11 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  paymentType: 'card' | 'paypal';
   userId: string;
   items: OrderItem[];
+  subtotal: number;
+  shipping: number;
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   shippingAddressId: number;

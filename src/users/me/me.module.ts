@@ -12,9 +12,9 @@ import { MeMiddleware } from './me.middleware';
 import { Address } from '../entities/address.entity';
 import { Router } from 'express';
 import { PaymentMethod } from '../entities/payment-method.entity';
-import { Order } from 'src/orders/entities/order.entity';
-import { OrderItem } from 'src/orders/entities/order-item.entity';
 import { Contact } from '../entities/contact.entity';
+import { OrderItem } from 'src/orders/entities/order-item.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Module({
   imports: [

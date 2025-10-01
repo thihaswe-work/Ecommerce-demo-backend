@@ -1,5 +1,5 @@
+import { Product } from 'src/products/entities/product.entity';
 import { DataSource } from 'typeorm';
-import { Product } from '../products/entities/product.entity';
 
 export const seedProducts = async (dataSource: DataSource) => {
   const productRepo = dataSource.getRepository(Product);

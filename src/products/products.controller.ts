@@ -27,6 +27,10 @@ export class ProductsController {
   GetAllProducts() {
     return this.productsService.findAll();
   }
+  @Get(':id')
+  GetOneProduct(@Param('id') id: number) {
+    return this.productsService.findOne(id);
+  }
 
   @Post()
   create(@Body() body: Partial<Product>) {
