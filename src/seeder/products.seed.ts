@@ -1,4 +1,4 @@
-import { Product } from 'src/products/entities/product.entity';
+import { Product } from 'src/entities/product.entity';
 import { DataSource } from 'typeorm';
 
 export const seedProducts = async (dataSource: DataSource) => {

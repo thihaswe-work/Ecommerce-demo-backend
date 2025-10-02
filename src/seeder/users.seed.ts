@@ -1,5 +1,5 @@
 // src/users/seeds/user.seed.ts
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { DataSource } from 'typeorm';
 
 export const seedUsers = async (dataSource: DataSource) => {

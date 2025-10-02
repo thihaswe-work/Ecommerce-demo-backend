@@ -1,7 +1,7 @@
 // src/addresses/seeds/address.seed.ts
 import { DataSource } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Address } from 'src/users/entities/address.entity';
+import { User } from 'src/entities/user.entity';
+import { Address } from 'src/entities/address.entity';
 
 export const seedAddresses = async (dataSource: DataSource, users: User[]) => {
   const addressRepo = dataSource.getRepository(Address);

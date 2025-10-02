@@ -1,12 +1,12 @@
-import { Product } from 'src/products/entities/product.entity';
-import { Address } from 'src/users/entities/address.entity';
-import { PaymentMethod } from 'src/users/entities/payment-method.entity';
+import { Product } from 'src/entities/product.entity';
+import { Address } from 'src/entities/address.entity';
 import { DataSource } from 'typeorm';
 import { seedUsers } from './users.seed';
-import { User } from 'src/users/entities/user.entity';
-import { Contact } from 'src/users/entities/contact.entity';
-import { Order } from 'src/orders/entities/order.entity';
-import { OrderItem } from 'src/orders/entities/order-item.entity';
+import { User } from 'src/entities/user.entity';
+import { Contact } from 'src/entities/contact.entity';
+import { Order } from 'src/entities/order.entity';
+import { OrderItem } from 'src/entities/order-item.entity';
+import { PaymentMethod } from 'src/entities/payment-method.entity';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);

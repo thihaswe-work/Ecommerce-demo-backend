@@ -2,16 +2,16 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Product } from '../products/entities/product.entity';
-import { Order } from '../orders/entities/order.entity';
+import { Product } from '../entities/product.entity';
+import { Order } from '../entities/order.entity';
 import { seedProducts } from './products.seed';
 import { seedOrders } from './orders.seed';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { seedUsers } from './users.seed';
 import { seedAddresses } from './addresses.seed';
-import { PaymentMethod } from 'src/users/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment-method.entity';
 import { seedPaymentMethods } from './payment.seed';
-import { Address } from 'src/users/entities/address.entity';
+import { Address } from 'src/entities/address.entity';
 @Injectable()
 export class SeederService {
   constructor(@InjectDataSource() private dataSource: DataSource) {}

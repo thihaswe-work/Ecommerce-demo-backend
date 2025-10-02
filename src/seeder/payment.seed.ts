@@ -1,7 +1,7 @@
 // src/payments/seeds/payment-method.seed.ts
 import { DataSource } from 'typeorm';
-import { PaymentMethod } from '../users/entities/payment-method.entity';
-import { User } from 'src/users/entities/user.entity';
+import { PaymentMethod } from '../entities/payment-method.entity';
+import { User } from 'src/entities/user.entity';
 
 export const seedPaymentMethods = async (
   dataSource: DataSource,

@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from 'src/modules/app/app.module';
 import * as dotenv from 'dotenv';
 import { GlobalExceptionFilter } from './filerAndInterceptors/http-exception.filter';
 import { LoggingInterceptor } from './filerAndInterceptors/http-interceptor';

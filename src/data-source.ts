@@ -1,13 +1,13 @@
 // src/data-source.ts
 import 'dotenv/config'; // <-- automatically loads .env
 import { DataSource } from 'typeorm';
-import { OrderItem } from './orders/entities/order-item.entity';
-import { Order } from './orders/entities/order.entity';
-import { Product } from './products/entities/product.entity';
-import { Address } from './users/entities/address.entity';
-import { PaymentMethod } from './users/entities/payment-method.entity';
-import { User } from './users/entities/user.entity';
-import { Contact } from './users/entities/contact.entity';
+import { OrderItem } from './entities/order-item.entity';
+import { Order } from './entities/order.entity';
+import { Product } from './entities/product.entity';
+import { Address } from './entities/address.entity';
+import { Contact } from './entities/contact.entity';
+import { User } from './entities/user.entity';
+import { PaymentMethod } from './entities/payment-method.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
