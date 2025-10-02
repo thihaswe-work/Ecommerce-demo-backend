@@ -9,7 +9,7 @@ import { seedOrders } from './orders.seed';
 import { User } from 'src/entities/user.entity';
 import { seedUsers } from './users.seed';
 import { seedAddresses } from './addresses.seed';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 import { seedPaymentMethods } from './payment.seed';
 import { Address } from 'src/entities/address.entity';
 @Injectable()

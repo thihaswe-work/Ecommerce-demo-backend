@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

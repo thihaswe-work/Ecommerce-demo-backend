@@ -11,7 +11,7 @@ import * as jwt from 'jsonwebtoken';
 import { Address } from '../../entities/address.entity';
 import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/order-item.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 
 @Injectable()
 export class MeService {

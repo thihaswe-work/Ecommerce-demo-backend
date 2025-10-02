@@ -7,7 +7,7 @@ import { Product } from './entities/product.entity';
 import { Address } from './entities/address.entity';
 import { Contact } from './entities/contact.entity';
 import { User } from './entities/user.entity';
-import { PaymentMethod } from './entities/payment-method.entity';
+import { PaymentMethod } from './entities/payment.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',

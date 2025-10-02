@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
 import { Address } from 'src/entities/address.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 import { Contact } from 'src/entities/contact.entity';
 
 @Entity('orders')

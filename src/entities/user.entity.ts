@@ -1,5 +1,5 @@
 import { Address } from 'src/entities/address.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

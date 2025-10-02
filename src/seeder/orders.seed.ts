@@ -6,7 +6,7 @@ import { User } from 'src/entities/user.entity';
 import { Contact } from 'src/entities/contact.entity';
 import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/order-item.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 
 export const seedOrders = async (dataSource: DataSource) => {
   const orderRepo = dataSource.getRepository(Order);

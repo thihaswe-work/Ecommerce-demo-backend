@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
 import { PaymentsService } from './payments.service';
 import { MeMiddleware } from 'src/modules/me/me.middleware';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 
 @Controller('payments')
 export class PaymentsController {

@@ -9,7 +9,7 @@ import { Contact } from 'src/entities/contact.entity';
 import { OrderItem } from 'src/entities/order-item.entity';
 import { Order } from 'src/entities/order.entity';
 import { User } from '../../entities/user.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { PaymentMethod } from 'src/entities/payment.entity';
 
 @common.Module({
   imports: [

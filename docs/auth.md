@@ -1,3 +1,5 @@
+## Auth Structure
+
 This project demonstrates three different ways of handling authentication in a NestJS application:
 
 1. AuthGuard – used for the orders routes (NestJS-native guard).
