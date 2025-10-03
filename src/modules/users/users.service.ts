@@ -1,33 +1,37 @@
-import { Component, HttpException } from 'nest.js';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../../entities/user.entity';
 
-@Component()
+@Injectable()
 export class UsersService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-    private users = [
-        { id: 1, name: 'John Doe' },
-        { id: 2, name: 'Alice Caeiro' },
-        { id: 3, name: 'Who Knows' },
-    ];
+  async create(data: Partial<User>): Promise<User> {
+    const u = await this.repo.create(data);
+    return this.repo.save(u);
+  }
 
-    getUsers() {
-        return this.users;
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const user = await this.repo.findOneBy({ id });
+    if (!user) throw new NotFoundException('User not found');
+    Object.assign(user, data);
+    return this.repo.save(user);
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.repo.find();
+  }
+
+  async findById(id: string): Promise<User> {
+    return this.repo.findOneBy({ id });
+  }
+
+  async delete(id: string) {
+    const existing = await this.repo.findOneBy({ id });
+    if (!existing) {
+      throw new NotFoundException('Product not found');
     }
-
-    getAllUsers() {
-        return Promise.resolve(this.users);
-    }
-
-    getUser(id: string) {
-        const user = this.users.find((user) => user.id === +id);
-        if (!user) {
-            throw new HttpException('User not found', 404);
-        }
-        return Promise.resolve(user);
-    }
-
-    addUser(user) {
-        this.users.push(user);
-        return Promise.resolve();
-    }
-
+    return this.repo.delete(id);
+  }
 }

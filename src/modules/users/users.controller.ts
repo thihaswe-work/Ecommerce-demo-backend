@@ -1,28 +1,80 @@
-import { UsersService } from "./users.service";
-import { Controller, RequestMapping, RequestMethod } from 'nest.js';
+import {
+  Controller,
+  Post,
+  Put,
+  Body,
+  Param,
+  Req,
+  Res,
+  Delete,
+  Get,
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { AdminMiddleware } from '../../common/admin.middleware';
+import type { Request, Response, NextFunction } from 'express';
+import { User } from 'src/entities/user.entity';
 
-@Controller({ path: 'users' })
+@Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-    constructor(private usersService: UsersService) {}
+  private useAuth(req: Request, res: Response, next: NextFunction) {
+    new AdminMiddleware().use(req, res, next);
+  }
 
-    @RequestMapping()
-    async getAllUsers(req, res) {
-        const users = await this.usersService.getAllUsers();
-        res.status(200).json(users);
-    }
+  @Get()
+  findAll(@Req() req: Request) {
+    return new Promise((resolve, reject) => {
+      this.useAuth(req, req.res, async () => {
+        const users = await this.usersService.findAll();
+        resolve(users);
+      });
+    });
+  }
 
-    @RequestMapping({ path: '/:id' })
-    async getUser(req, res) {
-        const user = await this.usersService.getUser(req.params.id);
-        res.status(200).json(user);
-    }
+  @Put(':id')
+  update(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: string,
+    @Body() body: Partial<User>,
+  ) {
+    return new Promise((resolve, reject) => {
+      this.useAuth(req, res, () => {
+        const updated = this.usersService.update(id, body);
+        if (!updated) reject({ status: 404, message: 'User not found' });
+        resolve(updated);
+      });
+    });
+  }
 
-    @RequestMapping({ method: RequestMethod.POST })
-    async addUser(req, res) {
-        const msg = await this.usersService.getUser(req.body.user);
-        res.status(201).json(msg);
-    }
+  // Do not Delete it !!important to look back
+  // @Put(':id')
+  // update(
+  //   @Req() req: Request,
+  //   @Param('id') id: string,
+  //   @Body() body: Partial<User>,
+  // ) {
+  //   return new Promise((resolve, reject) => {
+  //     this.useAuth(req, req.res, () => {
+  //       const updated = this.usersService.update(id, body);
+  //       if (!updated) reject({ status: 404, message: 'User not found' });
+  //       resolve(updated);
+  //     });
+  //   });
+  // }
 
+  @Delete(':id')
+  delete(@Req() req: Request, @Param('id') id: string) {
+    return new Promise((resolve, reject) => {
+      this.useAuth(req, req.res, () => {
+        const deleted = this.usersService.delete(id);
+        if (!deleted) {
+          reject({ status: 404, message: 'User not found' });
+        } else {
+          resolve({ status: 200, message: 'User deleted successfully' });
+        }
+      });
+    });
+  }
 }
-

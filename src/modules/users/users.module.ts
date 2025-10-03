@@ -1,21 +1,13 @@
-import { Module, MiddlewareBuilder } from 'nest.js';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MeModule } from '../me/me.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { AuthMiddleware } from './auth.middleware';
-import { ChatGateway } from './chat.gateway';
-import { ChatService } from './chat.service';
-import { NotificationService } from './notification.service';
+import { User } from '../../entities/user.entity';
 
 @Module({
-    controllers: [ UsersController ],
-    components: [ UsersService, ChatGateway, ChatService, NotificationService ],
-    exports: [ UsersService ],
+  imports: [TypeOrmModule.forFeature([User]), MeModule],
+  controllers: [UsersController],
+  providers: [UsersService],
 })
-export class UsersModule {
-    configure(builder: MiddlewareBuilder) {
-        builder.use({
-            middlewares: [ AuthMiddleware ],
-            forRoutes: [ UsersController ],
-        })
-    }
-}
+export class UsersModule {}
