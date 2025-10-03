@@ -221,7 +221,7 @@ export class SeederService {
         firstName: `User${i}`,
         lastName: `Test${i}`,
         email: `user${i}@example.com`,
-        password: `hashed_password_${i}`,
+        password: `password`,
         role: 'user',
       });
       await userRepo.save(u);
