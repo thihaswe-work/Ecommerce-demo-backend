@@ -33,6 +33,6 @@ export class ProductsModule implements NestModule {
         { path: 'products/:id', method: RequestMethod.PUT },
         { path: 'products/:id', method: RequestMethod.DELETE },
       );
-    consumer.apply(AdminMiddleware).forRoutes(ProductsController);
+    // consumer.apply(AdminMiddleware).forRoutes(ProductsController);
   }
 }

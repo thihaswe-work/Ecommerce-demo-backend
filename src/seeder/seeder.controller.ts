@@ -1,7 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
-import { SeederService } from './seeder.service';
+import { Controller, Get } from "@nestjs/common";
+import { SeederService } from "./seeder.service";
 
-@Controller('seed')
+@Controller("seed")
 export class SeederController {
   constructor(private readonly seederService: SeederService) {}
 
@@ -9,10 +9,10 @@ export class SeederController {
   async seed() {
     try {
       await this.seederService.seed();
-      return { message: '✅ Database seeded successfully' };
+      return { message: "✅ Database seeded successfully" };
     } catch (err) {
       console.error(err);
-      return { message: '❌ Seeding failed', error: err.message };
+      return { message: "❌ Seeding failed", error: err.message };
     }
   }
 }

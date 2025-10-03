@@ -3,9 +3,9 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable, tap, map } from 'rxjs';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Observable, tap, map } from "rxjs";
+import { Request, Response } from "express";
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {

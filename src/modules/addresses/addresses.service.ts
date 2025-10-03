@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { Address } from '../../entities/address.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { Address } from "../../entities/address.entity";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class AddressesService {
@@ -13,7 +13,7 @@ export class AddressesService {
   }
   async update(id: number, data: Partial<Address>): Promise<Address> {
     const existing = await this.repo.findOneBy({ id });
-    if (!existing) throw new NotFoundException('Payment method not found');
+    if (!existing) throw new NotFoundException("Payment method not found");
     Object.assign(existing, data);
     return this.repo.save(existing);
   }

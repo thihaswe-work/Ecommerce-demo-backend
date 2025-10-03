@@ -6,10 +6,10 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { User } from './user.entity';
+} from "typeorm";
+import { User } from "./user.entity";
 
-@Entity('shipping_addresses')
+@Entity("shipping_addresses")
 export class ShippingAddress {
   @PrimaryGeneratedColumn()
   id: number;

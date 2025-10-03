@@ -13,7 +13,7 @@ import { ProductsService } from './products.service';
 import { AdminMiddleware } from '../../common/admin.middleware';
 import type { Request, Response, NextFunction } from 'express';
 import { Product } from '../../entities/product.entity';
-import { AuthGuard } from 'src/common/auth.guard';
+import { AuthGuard } from '@/common/auth.guard';
 import { Roles } from 'src/common/roles.decorator';
 import { Role } from 'src/common/enum';
 import { RolesGuard } from 'src/common/roles.guard';
@@ -27,7 +27,7 @@ export class ProductsController {
   // }
 
   @Get()
-  @UseGuards(RolesGuard, AuthGuard)
+  // @UseGuards(RolesGuard, AuthGuard)
   GetAllProducts() {
     return this.productsService.findAll();
   }

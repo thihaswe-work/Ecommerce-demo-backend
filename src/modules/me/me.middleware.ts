@@ -2,17 +2,17 @@ import {
   Injectable,
   NestMiddleware,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { getToken } from 'src/common/lib';
+} from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import * as jwt from "jsonwebtoken";
+import { getToken } from "src/common/lib";
 
 @Injectable()
 export class MeMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.cookie;
 
-    if (!authHeader) throw new UnauthorizedException('No token provided');
+    if (!authHeader) throw new UnauthorizedException("No token provided");
 
     let token;
     if (authHeader) {
@@ -20,7 +20,7 @@ export class MeMiddleware implements NestMiddleware {
       token = getToken(rawCookie);
     }
 
-    if (!token) throw new UnauthorizedException('Unauthorized');
+    if (!token) throw new UnauthorizedException("Unauthorized");
 
     if (token) {
       try {
@@ -28,14 +28,14 @@ export class MeMiddleware implements NestMiddleware {
         (req as any).user = payload;
         next();
       } catch (err: any) {
-        if (err.name === 'TokenExpiredError') {
+        if (err.name === "TokenExpiredError") {
           // return a specific response so frontend knows what to do
           return res.status(401).json({
-            error: 'TokenExpired',
-            message: 'Your session has expired. Please call /me to refresh.',
+            error: "TokenExpired",
+            message: "Your session has expired. Please call /me to refresh.",
           });
         }
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException("Invalid token");
       }
     }
   }

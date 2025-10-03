@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('payments')
+@Entity("payments")
 export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,9 +14,9 @@ export class Payment {
   @Column()
   holderName: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: "float" })
   amount: number;
 
   @Column()
-  paymentType: 'card' | 'paypal' | 'onDelivery';
+  paymentType: "card" | "paypal" | "onDelivery";
 }

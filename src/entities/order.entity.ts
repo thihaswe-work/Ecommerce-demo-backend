@@ -8,38 +8,38 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
-} from 'typeorm';
-import { OrderItem } from './orderItem.entity';
-import { Address } from 'src/entities/address.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
-import { Contact } from './contact.entity';
-import { Payment } from './payment.entity';
-import { ShippingAddress } from './shipping-address.entity';
+} from "typeorm";
+import { OrderItem } from "./orderItem.entity";
+import { Address } from "src/entities/address.entity";
+import { PaymentMethod } from "src/entities/payment-method.entity";
+import { Contact } from "./contact.entity";
+import { Payment } from "./payment.entity";
+import { ShippingAddress } from "./shipping-address.entity";
 
-@Entity('orders')
+@Entity("orders")
 export class Order {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ type: "varchar", length: 50, nullable: true })
   customerId: string | null;
 
-  @Column('float', { default: 0 })
+  @Column("float", { default: 0 })
   subtotal: number;
 
-  @Column('float', { default: 0 })
+  @Column("float", { default: 0 })
   shipping: number;
 
-  @Column('float', { default: 0 })
+  @Column("float", { default: 0 })
   total: number;
 
-  @Column({ type: 'varchar', length: 50, default: 'pending' })
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  @Column({ type: "varchar", length: 50, default: "pending" })
+  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: "datetime" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: "datetime" })
   updatedAt: Date;
 
   @OneToOne(() => Contact, { cascade: true })

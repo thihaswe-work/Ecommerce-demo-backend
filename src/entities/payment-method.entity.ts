@@ -6,11 +6,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
-import { User } from './user.entity';
+import { User } from "./user.entity";
 
-@Entity('payment_methods')
+@Entity("payment_methods")
 export class PaymentMethod {
   @PrimaryGeneratedColumn()
   id: number;
@@ -27,10 +27,10 @@ export class PaymentMethod {
   @Column({ length: 5, nullable: true })
   numberLast4: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: "int", nullable: true })
   expiryMonth?: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: "int", nullable: true })
   expiryYear?: number;
 
   @Column({ length: 50, nullable: true })
@@ -39,13 +39,13 @@ export class PaymentMethod {
   @Column({ default: false })
   isDefault: boolean;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: "datetime" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: "datetime" })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.paymentMethod, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.paymentMethod, { onDelete: "CASCADE" })
   @JoinColumn() // <-- explicitly create the column
   user: User;
 }

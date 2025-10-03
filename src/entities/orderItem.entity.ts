@@ -4,10 +4,10 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-} from 'typeorm';
-import { Order } from './order.entity';
+} from "typeorm";
+import { Order } from "./order.entity";
 
-@Entity('order_items')
+@Entity("order_items")
 export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,10 +18,10 @@ export class OrderItem {
   @Column()
   productImage: string;
 
-  @Column('int')
+  @Column("int")
   quantity: number;
 
-  @Column('float')
+  @Column("float")
   price: number;
 
   @ManyToOne(() => Order, (order) => order.orderItems)

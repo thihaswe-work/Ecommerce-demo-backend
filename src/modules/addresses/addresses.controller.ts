@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
-import { AddressesService } from './addresses.service';
-import type { Request } from 'express';
-import { Address } from 'src/entities/address.entity';
+import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common";
+import { AddressesService } from "./addresses.service";
+import type { Request } from "express";
+import { Address } from "src/entities/address.entity";
 
-@Controller('addresses')
+@Controller("addresses")
 export class AddressesController {
   constructor(private readonly addressService: AddressesService) {}
 

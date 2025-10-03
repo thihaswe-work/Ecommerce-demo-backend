@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
-import type { NextFunction, Request, Response } from 'express';
-import { PaymentsService } from './payments.service';
-import { MeMiddleware } from 'src/modules/me/me.middleware';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
+import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common";
+import type { NextFunction, Request, Response } from "express";
+import { PaymentsService } from "./payments.service";
+import { MeMiddleware } from "src/modules/me/me.middleware";
+import { PaymentMethod } from "src/entities/payment-method.entity";
 
-@Controller('payments')
+@Controller("payments")
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
@@ -26,17 +26,17 @@ export class PaymentsController {
     });
   }
 
-  @Put(':id')
+  @Put(":id")
   update(
     @Req() req: Request,
-    @Param('id') id: number,
+    @Param("id") id: number,
     @Body() body: Partial<PaymentMethod>,
   ) {
     return new Promise((resolve, reject) => {
       this.useAuth(req, req.res, () => {
         const updated = this.paymentsService.update(id, body);
         if (!updated)
-          reject({ status: 404, message: 'Payment method not found' });
+          reject({ status: 404, message: "Payment method not found" });
         resolve(updated);
       });
     });

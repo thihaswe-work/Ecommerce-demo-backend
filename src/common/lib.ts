@@ -1,7 +1,7 @@
 export const getToken = (rawCookie: string) => {
   return rawCookie
-    ?.split(';')
+    ?.split(";")
     .map((c) => c.trim())
-    .find((c) => c.startsWith('token='))
-    ?.split('=')[1];
+    .find((c) => c.startsWith("token="))
+    ?.split("=")[1];
 };
