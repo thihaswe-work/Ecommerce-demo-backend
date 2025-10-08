@@ -77,7 +77,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
-export class AdminMiddleware implements NestMiddleware {
+export class AuthMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization'];
     const expected = `Bearer ${process.env.AUTH_TOKEN || 'mysecrettoken'}`;
@@ -96,14 +96,14 @@ export class AdminMiddleware implements NestMiddleware {
 ```ts
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ProductsController } from './products.controller';
-import { AdminMiddleware } from '../middleware/auth.middleware';
+import { AuthMiddleware } from '../middleware/auth.middleware';
 
 @Module({
   controllers: [ProductsController],
 })
 export class ProductsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AdminMiddleware).forRoutes(ProductsController);
+    consumer.apply(AuthMiddleware).forRoutes(ProductsController);
   }
 }
 ```

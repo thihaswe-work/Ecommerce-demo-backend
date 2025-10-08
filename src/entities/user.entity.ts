@@ -1,5 +1,5 @@
-import { Address } from "src/entities/address.entity";
-import { PaymentMethod } from "src/entities/payment-method.entity";
+import { Address } from 'src/entities/address.entity';
+import { PaymentMethod } from 'src/entities/payment-method.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,11 +7,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from "typeorm";
+} from 'typeorm';
 
-@Entity("users")
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ length: 255 })
@@ -26,22 +26,24 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: "user" })
+  @Column({ default: 'user' })
   role: string;
 
   @Column({ length: 1024, nullable: true })
   avatar?: string;
 
-  @CreateDateColumn({ type: "datetime" })
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: "datetime" })
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 
   // One user can have many addresses
-  @OneToMany(() => Address, (address) => address.user)
+  @OneToMany(() => Address, (address) => address.user, { cascade: true })
   address: Address[];
 
-  @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user)
+  @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user, {
+    cascade: true,
+  })
   paymentMethod: PaymentMethod[];
 }

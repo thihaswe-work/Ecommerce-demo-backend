@@ -1,4 +1,4 @@
-import { User } from "src/entities/user.entity";
+import { User } from 'src/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,9 +7,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
-@Entity("addresses")
+@Entity('addresses')
 export class Address {
   @PrimaryGeneratedColumn()
   id: number;
@@ -35,13 +35,13 @@ export class Address {
   @Column({ default: false })
   isDefault: boolean;
 
-  @CreateDateColumn({ type: "datetime" })
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: "datetime" })
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.address)
-  @JoinColumn({ name: "userId" })
+  @ManyToOne(() => User, (user) => user.address, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 }

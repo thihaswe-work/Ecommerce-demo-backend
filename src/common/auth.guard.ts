@@ -3,21 +3,25 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-} from "@nestjs/common";
-import { Request } from "express";
+} from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+import type { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    // console.log('auth guard');
     const req = context.switchToHttp().getRequest<Request>();
-    const authHeader = req.headers["authorization"];
-    const expected = `Bearer ${process.env.AUTH_TOKEN || "mysecrettoken"}`;
+    const token = req.authToken;
 
-    if (!authHeader || authHeader !== expected) {
-      throw new UnauthorizedException("Unauthorized");
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET!);
+      (req as any).user = payload;
+      return true; // Authorized, allow the request to continue
+    } catch (err: any) {
+      if (err.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Token expired');
+      }
+      throw new UnauthorizedException('Invalid token');
     }
-
-    return true; // Authorized, allow the request to continue
   }
 }

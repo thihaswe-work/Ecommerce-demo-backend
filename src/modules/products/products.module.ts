@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
-import { AdminMiddleware } from '../../common/admin.middleware';
+import { AuthMiddleware } from '../../common/auth.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from '../../entities/product.entity';
 import { APP_GUARD } from '@nestjs/core';
@@ -27,12 +27,12 @@ export class ProductsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     // Protect product routes (POST + PUT)
     consumer
-      .apply(AdminMiddleware)
+      .apply(AuthMiddleware)
       .forRoutes(
         { path: 'products', method: RequestMethod.POST },
         { path: 'products/:id', method: RequestMethod.PUT },
         { path: 'products/:id', method: RequestMethod.DELETE },
       );
-    // consumer.apply(AdminMiddleware).forRoutes(ProductsController);
+    // consumer.apply(AuthMiddleware).forRoutes(ProductsController);
   }
 }

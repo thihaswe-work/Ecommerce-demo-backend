@@ -1,25 +1,72 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-
-export interface User {
-  name: string;
-  email: string;
-}
+import * as jwt from 'jsonwebtoken';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '@/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  private readonly validEmail = "admin@passiongeek.com";
-  private readonly validPassword = "admin123";
-  private readonly token = process.env.AUTH_TOKEN || "mysecrettoken";
+  @InjectRepository(User) private repo: Repository<User>;
 
-  login(email: string, password: string): { user: User; token: string } {
-    if (email === this.validEmail && password === this.validPassword) {
-      const user: User = { name: "John Doe", email };
-      return { user, token: this.token };
+  async islogin(
+    token?: string,
+  ): Promise<{ user: User; newToken?: string } | null> {
+    // In real app, verify JWT. For now, we just check the token string
+    if (!token) throw new UnauthorizedException('Unauthorized');
+
+    let payload: any;
+    let newToken: string | undefined;
+
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err: any) {
+      if (err.name === 'TokenExpiredError') {
+        payload = jwt.decode(token);
+
+        if (!payload || typeof payload === 'string') {
+          throw new UnauthorizedException('Unauthorized');
+        }
+
+        newToken = jwt.sign(
+          { id: payload.id, email: payload.email },
+          process.env.JWT_USER_SECRET,
+          { expiresIn: '7d' },
+        );
+      } else {
+        throw new UnauthorizedException('Unauthorized');
+      }
     }
-    throw new UnauthorizedException("Invalid credentials");
+    // Return a sample user, you can fetch actual user if you store userId in JWT
+    const user = await this.repo.findOneBy({ email: payload.email }); // example
+
+    if (!user) {
+      throw new UnauthorizedException('Not logged in');
+    }
+
+    return { user, newToken };
+  }
+
+  async login(
+    email: string,
+    password: string,
+    remember: boolean,
+  ): Promise<{ user: User; token: string }> {
+    const user = await this.repo.findOneBy({ email });
+
+    if (!user) throw new Error('Email is Incorrect');
+    if (user.password !== password) {
+      throw new UnauthorizedException('Wrong Credentials');
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'roleSecret',
+      { expiresIn: remember ? '30d' : '1d' },
+    );
+    return { user, token };
   }
 
   logout(): { message: string } {
-    return { message: "Logged out successfully" };
+    return { message: 'Logged out successfully' };
   }
 }
