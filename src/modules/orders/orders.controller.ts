@@ -14,15 +14,16 @@ import { AuthGuard } from 'src/common/auth.guard';
 import { RolesGuard } from '@/common/roles.guard';
 
 @Controller('orders')
-@UseGuards(RolesGuard, AuthGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
+  @UseGuards(RolesGuard, AuthGuard)
   getAll(@Req() req: Request) {
     return this.ordersService.findAll();
   }
   @Get(':id')
+  @UseGuards(RolesGuard, AuthGuard)
   getById(@Param('id') id: string) {
     return this.ordersService.findById(id);
   }

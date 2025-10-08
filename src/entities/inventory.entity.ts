@@ -5,23 +5,23 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Product } from "./product.entity";
+} from 'typeorm';
+import { Product } from './product.entity';
 
-@Entity("inventories")
+@Entity('inventories')
 export class Inventory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   price: number;
 
   @Column()
-  quantity: number;
+  stock: number;
 
-  @CreateDateColumn({ type: "datetime" })
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: "datetime" })
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 }

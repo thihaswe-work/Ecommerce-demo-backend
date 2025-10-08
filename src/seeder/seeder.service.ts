@@ -270,7 +270,7 @@ export class SeederService {
     for (const p of products) {
       const inventory = inventoryRepo.create({
         price: p.price, // correct place for price
-        quantity: p.quantity || 0,
+        stock: p.quantity || 0,
       });
       await inventoryRepo.save(inventory);
 
@@ -294,7 +294,7 @@ export class SeederService {
         firstName: user ? user.firstName : `Guest_${guestCounter}`,
         lastName: user ? user.lastName : `Account`,
         email: user ? user.email : `guest${guestCounter}@example.com`,
-        phone: 1000000000 + guestCounter,
+        phone: (1000000000 + guestCounter).toString(),
       });
       await contactRepo.save(contact);
 
