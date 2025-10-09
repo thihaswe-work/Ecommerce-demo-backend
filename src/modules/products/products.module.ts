@@ -4,13 +4,11 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthMiddleware } from '../../common/auth.middleware';
+import { Product } from '../../entities/product.entity';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
-import { AuthMiddleware } from '../../common/auth.middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Product } from '../../entities/product.entity';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from 'src/common/roles.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product])],

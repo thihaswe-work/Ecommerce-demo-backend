@@ -14,27 +14,29 @@ import { User } from 'src/entities/user.entity';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@/common/auth.guard';
 import { RolesGuard } from '@/common/roles.guard';
+import { Roles } from '@/common/roles.decorator';
+import { Role } from '@/common/enum';
 
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.Admin)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(RolesGuard, AuthGuard)
+  @Roles(Role.Admin)
   async findAll(@Req() req: Request) {
     const users = await this.usersService.findAll();
     return users;
   }
 
   @Get()
-  @UseGuards(RolesGuard, AuthGuard)
   async findById(@Req() req: Request, @Param('id') id: string) {
     const users = await this.usersService.findById(id);
     return users;
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard, AuthGuard)
   update(
     @Req() req: Request,
     @Res() res: Response,
@@ -48,7 +50,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard, AuthGuard)
   async delete(@Param('id') id: string) {
     const deleted = await this.usersService.delete(id);
     if (!deleted) {

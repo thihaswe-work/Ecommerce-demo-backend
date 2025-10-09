@@ -5,11 +5,13 @@ import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/orderItem.entity';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
+import { OwnershipGuardFactory } from '@/common/ownership.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Order, OrderItem])],
-  providers: [OrdersService],
+  providers: [OrdersService, OwnershipGuardFactory(Order)],
   controllers: [OrdersController],
+  exports: [TypeOrmModule],
 })
 export class OrdersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

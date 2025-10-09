@@ -1,24 +1,15 @@
+import { AuthMiddleware } from '@/common/auth.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MeModule } from '../me/me.module';
+import { User } from '../../entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { User } from '../../entities/user.entity';
-import { AuthMiddleware } from '@/common/auth.middleware';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from '@/common/auth.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), MeModule],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-  ],
+  providers: [UsersService],
+  exports: [TypeOrmModule],
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

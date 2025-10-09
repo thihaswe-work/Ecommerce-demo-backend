@@ -1,17 +1,19 @@
+import { AuthGuard } from '@/common/auth.guard';
+import { RolesGuard } from '@/common/roles.guard';
 import {
+  Body,
   Controller,
+  Get,
+  Param,
   Post,
   Put,
-  Body,
-  Param,
   Req,
-  Get,
   UseGuards,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { OrdersService } from './orders.service';
-import type { Request, Response, NextFunction } from 'express';
-import { AuthGuard } from 'src/common/auth.guard';
-import { RolesGuard } from '@/common/roles.guard';
+import { OwnershipGuardFactory } from '@/common/ownership.guard';
+import { Order } from '@/entities/order.entity';
 
 @Controller('orders')
 export class OrdersController {
@@ -23,7 +25,7 @@ export class OrdersController {
     return this.ordersService.findAll();
   }
   @Get(':id')
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, OwnershipGuardFactory(Order))
   getById(@Param('id') id: string) {
     return this.ordersService.findById(id);
   }

@@ -28,7 +28,7 @@ export class AuthService {
         }
 
         newToken = jwt.sign(
-          { id: payload.id, email: payload.email },
+          { id: payload.id, email: payload.email, role: payload.role },
           process.env.JWT_USER_SECRET,
           { expiresIn: '7d' },
         );
@@ -59,7 +59,7 @@ export class AuthService {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'roleSecret',
       { expiresIn: remember ? '30d' : '1d' },
     );

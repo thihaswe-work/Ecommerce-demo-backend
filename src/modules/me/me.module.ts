@@ -1,37 +1,27 @@
+import { AuthMiddleware } from '@/common/auth.middleware';
 import * as common from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Contact } from 'src/entities/contact.entity';
-import { Order } from 'src/entities/order.entity';
-import { OrderItem } from 'src/entities/orderItem.entity';
-import { PaymentMethod } from 'src/entities/payment-method.entity';
-import { Address } from '../../entities/address.entity';
-import { User } from '../../entities/user.entity';
+import { AddressModule } from '../addresses/addresses.module';
+import { OrdersModule } from '../orders/orders.module';
+import { UsersModule } from '../users/users.module';
 import { MeController } from './me.controller';
-import { MeMiddleware } from './me.middleware';
 import { MeService } from './me.service';
+import { PaymentMethodModule } from '../paymentMethod/paymentMethod.module';
+import { OwnershipGuardFactory } from '@/common/ownership.guard';
+import { User } from '@/entities/user.entity';
 
 @common.Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      User,
-      Address,
-      PaymentMethod,
-      Order,
-      OrderItem,
-      Contact,
-    ]),
-  ],
+  imports: [AddressModule, OrdersModule, UsersModule, PaymentMethodModule],
   controllers: [MeController],
-  providers: [MeService],
+  providers: [MeService, OwnershipGuardFactory(User)],
 })
 export class MeModule implements common.NestModule {
   configure(consumer: common.MiddlewareConsumer) {
     consumer
-      .apply(MeMiddleware)
+      .apply(AuthMiddleware)
       .forRoutes(
         { path: 'me', method: common.RequestMethod.PUT },
         { path: 'me', method: common.RequestMethod.DELETE },
-        { path: 'me/profile', method: common.RequestMethod.GET },
+        { path: 'me', method: common.RequestMethod.GET },
       ); // Only protect /users/me
 
     // consumer.apply(MeMiddleware).forRoutes(MeController);
