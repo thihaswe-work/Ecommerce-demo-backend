@@ -5,11 +5,12 @@ import { AddressesController } from './addresses.controller';
 import { AddressesService } from './addresses.service';
 import { MeMiddleware } from '../me/me.middleware';
 import { AuthMiddleware } from '@/common/auth.middleware';
+import { OwnershipGuardFactory } from '@/common/ownership.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Address])],
   controllers: [AddressesController],
-  providers: [AddressesService],
+  providers: [AddressesService, OwnershipGuardFactory(Address)],
   exports: [TypeOrmModule, AddressesService],
 })
 export class AddressModule implements NestModule {

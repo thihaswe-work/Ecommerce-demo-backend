@@ -1,5 +1,10 @@
 import { AuthMiddleware } from '@/common/auth.middleware';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/orderItem.entity';
@@ -15,6 +20,12 @@ import { OwnershipGuardFactory } from '@/common/ownership.guard';
 })
 export class OrdersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes(OrdersController);
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(
+        { path: '/orders', method: RequestMethod.GET },
+        { path: '/orders', method: RequestMethod.DELETE },
+        { path: '/orders', method: RequestMethod.PUT },
+      );
   }
 }

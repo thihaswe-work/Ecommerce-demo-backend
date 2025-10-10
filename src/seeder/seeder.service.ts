@@ -252,6 +252,7 @@ export class SeederService {
       // Each user has a payment method
       const pm = paymentMethodRepo.create({
         cardName: 'Visa',
+        type: 'card',
         number: `411111111111111${i}`, // string
         numberLast4: `111${i}`, // string
         expiryMonth: 12,

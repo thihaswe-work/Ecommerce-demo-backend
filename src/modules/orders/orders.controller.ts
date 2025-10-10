@@ -20,7 +20,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  @UseGuards(RolesGuard, AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   getAll(@Req() req: Request) {
     return this.ordersService.findAll();
   }
@@ -31,13 +31,12 @@ export class OrdersController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
   create(@Req() req: Request, @Body() body: any) {
     return this.ordersService.create(body);
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, OwnershipGuardFactory(Order))
   update(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
     const updated = this.ordersService.update(id, body);
     return updated;

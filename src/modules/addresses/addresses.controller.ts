@@ -1,9 +1,25 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common";
-import { AddressesService } from "./addresses.service";
-import type { Request } from "express";
-import { Address } from "src/entities/address.entity";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { AddressesService } from './addresses.service';
+import type { Request } from 'express';
+import { Address } from 'src/entities/address.entity';
+import { AuthGuard } from '@/common/auth.guard';
+import { RolesGuard } from '@/common/roles.guard';
+import { Role } from '@/common/enum';
+import { Roles } from '@/common/roles.decorator';
+import { OwnershipGuardFactory } from '@/common/ownership.guard';
 
-@Controller("addresses")
+@Controller('addresses')
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.Admin)
 export class AddressesController {
   constructor(private readonly addressService: AddressesService) {}
 

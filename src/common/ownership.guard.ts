@@ -61,15 +61,45 @@ export const OwnershipGuardFactory = (entity: Type<any>) => {
 
       if (user.role === 'admin') return true;
 
-      const record = await this.repo.findOne({ where: { id } });
+      const hasUserRelation = this.repo.metadata.relations.some(
+        (rel) => rel.propertyName === 'user',
+      );
+
+      const record = await this.repo.findOne({
+        where: { id },
+        relations: hasUserRelation ? ['user'] : [],
+      });
+
       if (!record) throw new ForbiddenException('Resource not found');
 
-      if (record instanceof User && record.id === user.id) return true;
-      // check multiple possible ownership fields
-      const ownerIds = ['userId', 'customerId', 'ownerId'];
-      const isOwner = ownerIds.some((key) => record[key] === user.id);
+      let ownerId: string | undefined;
 
-      if (!isOwner) throw new ForbiddenException('Not allowed');
+      // If the entity is User itself
+      if (record instanceof User) {
+        ownerId = record.id;
+      }
+      // If it has a 'user' relation
+      else if ('user' in record && record.user?.id) {
+        ownerId = record.user.id;
+      }
+      // Otherwise, check common ownership fields
+      else {
+        const ownerFields = ['userId', 'customerId', 'ownerId'];
+        for (const field of ownerFields) {
+          const value = record[field];
+          if (typeof value === 'object' && value !== null && 'id' in value) {
+            ownerId = value.id;
+            break;
+          } else if (typeof value === 'string') {
+            ownerId = value;
+            break;
+          }
+        }
+      }
+
+      if (!ownerId || ownerId !== user.id) {
+        throw new ForbiddenException('Not allowed');
+      }
 
       return true;
     }
@@ -77,3 +107,11 @@ export const OwnershipGuardFactory = (entity: Type<any>) => {
 
   return GenericOwnershipGuard;
 };
+
+// const record = await this.repo.findOne({ where: { id } });
+// if (!record) throw new ForbiddenException('Resource not found');
+
+// if (record instanceof User && record.id === user.id) return true;
+// // check multiple possible ownership fields
+// const ownerIds = ['userId', 'customerId', 'ownerId'];
+// const isOwner = ownerIds.some((key) => record[key] === user.id);

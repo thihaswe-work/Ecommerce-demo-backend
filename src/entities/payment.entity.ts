@@ -1,22 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("payments")
+@Entity('payments')
 export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   number: string;
 
-  @Column()
-  cardName: string;
+  @Column({ nullable: true })
+  cardName: 'Visa' | 'Mastercard' | 'Amex';
 
-  @Column()
+  @Column({ nullable: true })
   holderName: string;
 
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   amount: number;
 
   @Column()
-  paymentType: "card" | "paypal" | "onDelivery";
+  paymentType: 'card' | 'paypal' | 'onDelivery';
 }
