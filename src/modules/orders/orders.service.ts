@@ -7,6 +7,7 @@ import { OrderItem } from 'src/entities/orderItem.entity';
 
 @Injectable()
 export class OrdersService {
+  private guestCounter = 0;
   constructor(
     @InjectRepository(Order) private readonly repo: Repository<Order>,
     @InjectRepository(OrderItem)
@@ -30,13 +31,25 @@ export class OrdersService {
     return order;
   }
 
-  async create(data: Partial<Order>): Promise<Order> {
-    const order: Order = this.repo.create({
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  async create(payload: Partial<Order>): Promise<Order> {
+    const customerId = payload.customerId
+      ? payload.customerId
+      : `guest${this.guestCounter}`;
+    if (!payload.customerId) this.guestCounter += 1;
+    const order = this.repo.create({
+      customerId: customerId,
+      subtotal: payload.subtotal,
+      shipping: payload.shipping,
+      total: payload.total,
+      status: 'pending',
+      contact: payload.contact, // plain object works because cascade: true
+      payment: payload.payment, // same here
+      shippingAddress: payload.shippingAddress,
+      // same here
+      orderItems: payload.orderItems, // array of plain objects
     });
-    return this.repo.save(order);
+
+    return await this.repo.save(order);
   }
 
   async update(id: string, data: Partial<Order>): Promise<Order> {
@@ -44,5 +57,15 @@ export class OrdersService {
     if (!existing) throw new NotFoundException('Order not found');
     Object.assign(existing, data);
     return this.repo.save(existing);
+  }
+
+  async delete(id: string): Promise<{ message: string }> {
+    const order = await this.repo.findOne({ where: { id } });
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    await this.repo.remove(order); // cascades to related entities
+    return { message: `Order ${id} deleted successfully` };
   }
 }

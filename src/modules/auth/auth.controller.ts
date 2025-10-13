@@ -48,7 +48,8 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body() body: { email: string; password: string; remember: boolean },
+    @Body()
+    body: { email: string; password: string; remember: boolean },
     @Res() res: Response,
   ) {
     try {
@@ -59,7 +60,7 @@ export class AuthController {
         remember,
       );
 
-      res.cookie('token', token, {
+      res.cookie(user.role === Role.Admin ? 'adminToken' : 'token', token, {
         httpOnly: user.role === Role.User ? true : false,
         sameSite: 'lax',
         path: '/',
@@ -67,17 +68,18 @@ export class AuthController {
       });
 
       const { password: _, ...safeUser } = user;
-      return res
-        .status(HttpStatus.OK)
-        .json({ message: 'Logged in', user: safeUser });
+      return res.status(HttpStatus.OK).json({
+        message: 'Logged in',
+        user: safeUser,
+      });
     } catch (err: any) {
       return res.status(HttpStatus.UNAUTHORIZED).json({ message: err.message });
     }
   }
 
   @Post('logout')
-  ogout(@Res() res: Response) {
-    res.clearCookie('token');
+  logout(@Body() body, @Res() res: Response) {
+    res.clearCookie(body.userRole === 'admin' ? 'adminToken' : 'token');
     return res.status(HttpStatus.OK).json(this.authService.logout());
   }
 }

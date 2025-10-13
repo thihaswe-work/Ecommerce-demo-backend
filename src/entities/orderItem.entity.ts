@@ -26,7 +26,7 @@ export class OrderItem {
   @Column('float')
   price: number;
 
-  @ManyToOne(() => Order, (order) => order.orderItems)
+  @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
   @JoinColumn()
   order: Order;
 

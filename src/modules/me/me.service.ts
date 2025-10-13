@@ -29,7 +29,14 @@ export class MeService {
       const paymentMethods = await this.paymentMethodRepo.find({
         where: { user: { id: userId } },
       });
-      const orders = await this.orderRepo.findBy({ customerId: userId });
+      const orders = await this.orderRepo.find({
+        where: { customerId: userId },
+        relations: {
+          orderItems: true,
+          shippingAddress: true,
+          contact: true,
+        },
+      });
 
       return { addresses, paymentMethods, orders };
     } catch (error) {

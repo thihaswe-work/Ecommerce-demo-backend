@@ -24,8 +24,8 @@ export class OrdersModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: '/orders', method: RequestMethod.GET },
-        { path: '/orders', method: RequestMethod.DELETE },
-        { path: '/orders', method: RequestMethod.PUT },
+        { path: '/orders/*', method: RequestMethod.DELETE },
+        { path: '/orders/*', method: RequestMethod.PUT },
       );
   }
 }

@@ -3,6 +3,7 @@ import { RolesGuard } from '@/common/roles.guard';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -14,6 +15,8 @@ import type { Request } from 'express';
 import { OrdersService } from './orders.service';
 import { OwnershipGuardFactory } from '@/common/ownership.guard';
 import { Order } from '@/entities/order.entity';
+import { Roles } from '@/common/roles.decorator';
+import { Role } from '@/common/enum';
 
 @Controller('orders')
 export class OrdersController {
@@ -21,6 +24,7 @@ export class OrdersController {
 
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   getAll(@Req() req: Request) {
     return this.ordersService.findAll();
   }
@@ -32,6 +36,8 @@ export class OrdersController {
 
   @Post()
   create(@Req() req: Request, @Body() body: any) {
+    // return this.ordersService.findById('44dac909-6de8-40ba-b2be-07395233d852');
+
     return this.ordersService.create(body);
   }
 
@@ -39,6 +45,14 @@ export class OrdersController {
   @UseGuards(AuthGuard, OwnershipGuardFactory(Order))
   update(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
     const updated = this.ordersService.update(id, body);
+    return updated;
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  delete(@Req() req: Request, @Param('id') id: string) {
+    const updated = this.ordersService.delete(id);
     return updated;
   }
 }

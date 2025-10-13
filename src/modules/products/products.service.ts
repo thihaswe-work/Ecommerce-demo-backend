@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Product } from "../../entities/product.entity";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Product } from '../../entities/product.entity';
 
 @Injectable()
 export class ProductsService {
@@ -18,14 +18,14 @@ export class ProductsService {
 
   async update(id: number, data: Partial<Product>): Promise<Product> {
     const existing = await this.repo.findOneBy({ id });
-    if (!existing) throw new NotFoundException("Product not found");
+    if (!existing) throw new NotFoundException('Product not found');
     Object.assign(existing, data);
     return this.repo.save(existing);
   }
   async delete(id: number) {
     const existing = await this.repo.findOneBy({ id });
     if (!existing) {
-      throw new NotFoundException("Product not found");
+      throw new NotFoundException('Product not found');
     }
     return this.repo.delete(id);
   }

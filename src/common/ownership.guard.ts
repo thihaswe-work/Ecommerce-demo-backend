@@ -61,6 +61,14 @@ export const OwnershipGuardFactory = (entity: Type<any>) => {
 
       if (user.role === 'admin') return true;
 
+      // authorization for me/ route only
+      if (!id) {
+        const record = this.repo.findBy({ id: user.id });
+
+        if (record) return true;
+      }
+
+      // normal authorization for other entity
       const hasUserRelation = this.repo.metadata.relations.some(
         (rel) => rel.propertyName === 'user',
       );
