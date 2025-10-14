@@ -1,9 +1,9 @@
 const { v4: uuid } = require('uuid');
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/orderItem.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrdersService {
