@@ -27,6 +27,7 @@ export class AuthController {
     if (newToken) {
       res.cookie('token', newToken, {
         httpOnly: user.role === Role.User ? true : false,
+        secure: true,
         sameSite: 'none',
         path: '/',
         maxAge: 24 * 60 * 60 * 1000,
@@ -62,6 +63,7 @@ export class AuthController {
 
       res.cookie(user.role === Role.Admin ? 'adminToken' : 'token', token, {
         httpOnly: user.role === Role.User ? true : false,
+        secure: true,
         sameSite: 'none',
         path: '/',
         maxAge: body.remember ? 7 * 24 * 60 * 60 * 1000 : undefined,
