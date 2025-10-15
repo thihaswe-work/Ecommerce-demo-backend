@@ -1,8 +1,13 @@
 import * as jwt from 'jsonwebtoken';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@/entities/user.entity';
+import { Role } from '@/common/enum';
 
 @Injectable()
 export class AuthService {
@@ -63,6 +68,40 @@ export class AuthService {
       process.env.JWT_SECRET || 'roleSecret',
       { expiresIn: remember ? '30d' : '1d' },
     );
+    return { user, token };
+  }
+
+  async register(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) {
+    // Check if user already exists
+    const existingUser = await this.repo.findOneBy({
+      email,
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('Email already in use');
+    }
+
+    const newUser = this.repo.create({
+      firstName,
+      lastName,
+      email,
+      password: password,
+      role: Role.User, // default role
+    });
+
+    const user = await this.repo.save(newUser);
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: '7d' },
+    );
+
     return { user, token };
   }
 

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { first } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
@@ -76,6 +77,47 @@ export class AuthController {
       });
     } catch (err: any) {
       return res.status(HttpStatus.UNAUTHORIZED).json({ message: err.message });
+    }
+  }
+
+  @Post('register')
+  async register(
+    @Body()
+    body: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+    },
+    @Res() res: Response,
+  ) {
+    try {
+      const { firstName, lastName, email, password } = body;
+
+      const { user, token } = await this.authService.register(
+        firstName,
+        lastName,
+        email,
+        password,
+      );
+
+      // ✅ Cookie lasts 7 days
+      res.cookie(user.role === Role.Admin ? 'adminToken' : 'token', token, {
+        httpOnly: user.role === Role.User ? true : false,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      const { password: _, ...safeUser } = user;
+
+      return res.status(HttpStatus.CREATED).json({
+        message: 'Registered successfully',
+        user: safeUser,
+      });
+    } catch (err: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
     }
   }
 
