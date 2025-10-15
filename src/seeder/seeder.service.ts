@@ -78,7 +78,7 @@ const products = [
   {
     name: 'Fitness Watch',
     desc: 'Track your workouts and health',
-    image: 'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b',
+    image: 'products/fitness-tracker.jpg',
     price: 120,
     quantity: 45,
   },

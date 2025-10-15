@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Product } from '../../entities/product.entity';
@@ -20,14 +21,33 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(Role.Admin, Role.User)
-  GetAllProducts() {
-    return this.productsService.findAll();
+  async GetAllProducts(
+    @Query('max') max: string,
+    @Query('min') min: string,
+    @Query('query') query: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('order') order: 'ASC' | 'DESC' = 'ASC',
+  ) {
+    page = Number(page);
+    limit = Number(limit);
+    const minNum = min !== undefined && min !== '' ? Number(min) : undefined;
+    const maxNum = max !== undefined && max !== '' ? Number(max) : undefined;
+    const data = await this.productsService.findAll(
+      page,
+      limit,
+      order,
+      query,
+      minNum,
+      maxNum,
+    );
+    return data;
   }
+
   @Get(':id')
   GetOneProduct(@Param('id') id: number) {
-    return this.productsService.findOne(id);
+    const product = this.productsService.findOne(id);
+    return product;
   }
 
   @Post()

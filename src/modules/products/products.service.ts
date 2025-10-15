@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Like } from 'typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 
@@ -11,7 +12,6 @@ export class ProductsService {
   ) {}
 
   async create(data: Partial<Product>): Promise<Product> {
-    console.log(data);
     const product = this.repo.create(data);
     return this.repo.save(product);
   }
@@ -29,12 +29,50 @@ export class ProductsService {
     }
     return this.repo.delete(id);
   }
+  async findAll(
+    page: number,
+    limit: number,
+    order: 'ASC' | 'DESC',
+    query?: string,
+    min?: number,
+    max?: number,
+  ) {
+    const qb = this.repo
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.inventory', 'inventory')
+      .orderBy('product.name', order)
+      .take(limit)
+      .skip((page - 1) * limit);
 
-  async findAll(): Promise<Product[]> {
-    return this.repo.find();
+    if (query) {
+      qb.andWhere('product.name LIKE :query', { query: `%${query}%` });
+    }
+
+    if (min !== undefined) {
+      qb.andWhere('inventory.price >= :min', { min });
+    }
+    if (max !== undefined) {
+      qb.andWhere('inventory.price <= :max', { max });
+    }
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        totalItems: total,
+        itemCount: data.length,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      },
+    };
   }
 
-  async findOne(id: number): Promise<Product | null> {
-    return this.repo.findOneBy({ id });
+  async findOne(id: number): Promise<Product> {
+    return await this.repo.findOne({
+      where: { id },
+      relations: ['inventory'], // make sure inventory is loaded
+    });
   }
 }
