@@ -26,7 +26,7 @@ export class AuthController {
     const { user, newToken } = await this.authService.islogin(token);
 
     if (newToken) {
-      res.cookie('token', newToken, {
+      res.cookie(user.role === Role.Admin ? 'adminToken' : 'token', token, {
         httpOnly: user.role === Role.User ? true : false,
         secure: true,
         sameSite: 'none',

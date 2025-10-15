@@ -32,6 +32,33 @@ export class MeController {
     return res.status(200).json(data);
   }
 
+  @Put()
+  @UseGuards(AuthGuard, OwnershipGuardFactory(User))
+  async updateProfile(
+    @Req() req: any,
+    @Body() dto: Partial<User>,
+    @Res() res: Response,
+  ) {
+    const { user } = req;
+    const data = await this.meService.updateUserInfo(user.id, dto);
+    return res.status(200).json(data);
+  }
+
+  @Put('password')
+  @UseGuards(AuthGuard, OwnershipGuardFactory(User))
+  async updatePassword(
+    @Req() req: any,
+    @Body() dto: { currentPassword: string; newPassword: string },
+    @Res() res: Response,
+  ) {
+    const updatedUser = await this.meService.updatePassword(
+      req.user.id,
+      dto.currentPassword,
+      dto.newPassword,
+    );
+    return res.json(updatedUser);
+  }
+
   // -------- ORDERS --------
   @Get('orders')
   @UseGuards(AuthGuard, OwnershipGuardFactory(Order))

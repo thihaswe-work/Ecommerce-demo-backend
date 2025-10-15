@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -50,6 +51,25 @@ export class MeService {
     if (!user) throw new NotFoundException('User not found');
 
     Object.assign(user, data);
+    return await this.userRepo.save(user);
+  }
+  async updatePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // check current password
+    if (user.password !== currentPassword) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    // update password
+    user.password = newPassword;
     return await this.userRepo.save(user);
   }
 

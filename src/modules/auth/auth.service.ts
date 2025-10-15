@@ -97,7 +97,7 @@ export class AuthService {
     const user = await this.repo.save(newUser);
     // Generate JWT
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.id, role: user.role, email: user.email },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' },
     );

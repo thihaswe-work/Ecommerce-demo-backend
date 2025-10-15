@@ -11,9 +11,11 @@ import { OrderItem } from 'src/entities/orderItem.entity';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { OwnershipGuardFactory } from '@/common/ownership.guard';
+import { Product } from '@/entities/product.entity';
+import { Inventory } from '@/entities/inventory.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem])],
+  imports: [TypeOrmModule.forFeature([Order, OrderItem, Product, Inventory])],
   providers: [OrdersService, OwnershipGuardFactory(Order)],
   controllers: [OrdersController],
   exports: [TypeOrmModule],

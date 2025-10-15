@@ -19,7 +19,6 @@ import { AppService } from './app.service';
     OrdersModule,
     ProductsModule,
     AuthModule,
-    SeederModule,
     MeModule,
     PaymentsModule,
     AddressModule,

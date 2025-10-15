@@ -1,4 +1,6 @@
 const { v4: uuid } = require('uuid');
+import { Inventory } from '@/entities/inventory.entity';
+import { Product } from '@/entities/product.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/entities/order.entity';
@@ -11,7 +13,11 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order) private readonly repo: Repository<Order>,
     @InjectRepository(OrderItem)
-    private readonly orderItem: Repository<OrderItem>,
+    private readonly orderItemRepo: Repository<OrderItem>,
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>,
+    @InjectRepository(Inventory)
+    private readonly inventoryRepo: Repository<Inventory>,
   ) {}
 
   async findAll(): Promise<Order[]> {
@@ -48,6 +54,28 @@ export class OrdersService {
       // same here
       orderItems: payload.orderItems, // array of plain objects
     });
+
+    // Reduce inventory stock
+    for (const item of payload.orderItems || []) {
+      const product = await this.productRepo.findOne({
+        where: { id: item.productId },
+        relations: ['inventory'],
+      });
+
+      if (!product)
+        throw new Error(`Product with id ${item.productId} not found`);
+
+      // Reduce stock
+      product.inventory.stock -= item.quantity;
+
+      // Prevent negative stock
+      if (product.inventory.stock < 0) {
+        throw new Error(`Not enough stock for product ${product.name}`);
+      }
+
+      // Save updated inventory
+      await this.inventoryRepo.save(product.inventory);
+    }
 
     return await this.repo.save(order);
   }
