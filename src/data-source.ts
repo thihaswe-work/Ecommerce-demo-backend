@@ -11,6 +11,7 @@ import { PaymentMethod } from './entities/payment-method.entity';
 import { Inventory } from './entities/inventory.entity';
 import { Payment } from './entities/payment.entity';
 import { ShippingAddress } from './entities/shipping-address.entity';
+import { Category } from './entities/category.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -20,6 +21,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'ecommerce',
   entities: [
+    Category,
     User,
     Address,
     PaymentMethod,

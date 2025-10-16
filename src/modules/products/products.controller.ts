@@ -26,11 +26,21 @@ export class ProductsController {
     @Query('min') min: string,
     @Query('query') query: string,
     @Query('page') page = 1,
+    @Query('category') category?: string[] | undefined | string,
     @Query('limit') limit = 10,
     @Query('order') order: 'ASC' | 'DESC' = 'ASC',
   ) {
     page = Number(page);
     limit = Number(limit);
+
+    // Normalize category to always be an array
+    const categoryArray = Array.isArray(category)
+      ? category
+      : category
+        ? [category]
+        : undefined;
+
+    const categoryIds = categoryArray ? categoryArray?.map(Number) : undefined; // convert to numbers
     const minNum = min !== undefined && min !== '' ? Number(min) : undefined;
     const maxNum = max !== undefined && max !== '' ? Number(max) : undefined;
     const data = await this.productsService.findAll(
@@ -40,6 +50,7 @@ export class ProductsController {
       query,
       minNum,
       maxNum,
+      categoryIds,
     );
     return data;
   }

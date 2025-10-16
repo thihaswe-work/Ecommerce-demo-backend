@@ -1,3 +1,4 @@
+import { Category } from '@/entities/category.entity';
 import { Injectable } from '@nestjs/common';
 import { AppDataSource } from 'src/data-source';
 import { Address } from 'src/entities/address.entity';
@@ -11,6 +12,12 @@ import { Product } from 'src/entities/product.entity';
 import { ShippingAddress } from 'src/entities/shipping-address.entity';
 import { User } from 'src/entities/user.entity';
 
+const categories = [
+  { id: 1, name: 'Electronics', image: '/categories/electronics.jpg' },
+  { id: 2, name: 'Fashion', image: '/categories/fashion.jpg' },
+  { id: 3, name: 'Home & Living', image: '/categories/home.jpg' },
+  { id: 4, name: 'Sports', image: '/categories/sports.jpg' },
+];
 const products = [
   {
     name: 'Gaming Laptop',
@@ -194,6 +201,146 @@ const products = [
     price: 100,
     quantity: 50,
   },
+  {
+    name: 'Noise Cancelling Earbuds',
+    desc: 'Compact earbuds with active noise cancellation.',
+    image: '/products/earbuds.jpg',
+    price: 120,
+    quantity: 60,
+  },
+  {
+    name: '4K Action Camera',
+    desc: 'Waterproof action camera with 4K recording.',
+    image: '/products/action-camera.jpg',
+    price: 180,
+    quantity: 25,
+  },
+  {
+    name: 'Smart Light Bulb',
+    desc: 'WiFi-enabled smart light bulb with RGB colors.',
+    image: '/products/smart-light-bulb.jpg',
+    price: 25,
+    quantity: 80,
+  },
+  {
+    name: 'Electric Toothbrush',
+    desc: 'Rechargeable toothbrush with multiple modes.',
+    image: '/products/electric-toothbrush.jpg',
+    price: 60,
+    quantity: 40,
+  },
+  {
+    name: 'Portable Projector',
+    desc: 'Mini projector for movies and presentations.',
+    image: '/products/portable-projector.jpg',
+    price: 220,
+    quantity: 15,
+  },
+  {
+    name: 'Smart Thermostat',
+    desc: 'Control your home temperature remotely.',
+    image: '/products/smart-thermostat.jpg',
+    price: 200,
+    quantity: 20,
+  },
+  {
+    name: 'VR Headset',
+    desc: 'Immersive virtual reality headset for gaming.',
+    image: '/products/vr-headset.jpg',
+    price: 400,
+    quantity: 10,
+  },
+  {
+    name: 'Laptop Cooling Pad',
+    desc: 'Keeps your laptop cool during heavy use.',
+    image: '/products/laptop-cooling-pad.jpg',
+    price: 35,
+    quantity: 50,
+  },
+  {
+    name: 'Portable Charger 20000mAh',
+    desc: 'High-capacity power bank for smartphones and tablets.',
+    image: '/products/portable-charger.jpg',
+    price: 50,
+    quantity: 70,
+  },
+  {
+    name: 'Smart Door Lock',
+    desc: 'Keyless entry smart door lock with app control.',
+    image: '/products/smart-door-lock.jpg',
+    price: 180,
+    quantity: 15,
+  },
+  {
+    name: 'Noise Cancelling Headphones',
+    desc: 'Over-ear headphones with deep bass and ANC.',
+    image: '/products/noise-cancelling-headphones.jpg',
+    price: 250,
+    quantity: 30,
+  },
+  {
+    name: 'Wireless Game Controller',
+    desc: 'Ergonomic controller compatible with PC and consoles.',
+    image: '/products/wireless-controller.jpg',
+    price: 60,
+    quantity: 45,
+  },
+  {
+    name: 'Smart Coffee Maker',
+    desc: 'Brew coffee remotely with your smartphone.',
+    image: '/products/smart-coffee-maker.jpg',
+    price: 150,
+    quantity: 25,
+  },
+  {
+    name: 'Electric Scooter',
+    desc: 'Foldable electric scooter with 20km range.',
+    image: '/products/electric-scooter.jpg',
+    price: 500,
+    quantity: 12,
+  },
+  {
+    name: 'Smart Water Bottle',
+    desc: 'Tracks your hydration and syncs with an app.',
+    image: '/products/smart-water-bottle.jpg',
+    price: 35,
+    quantity: 40,
+  },
+  {
+    name: 'Digital Photo Frame',
+    desc: 'Display your favorite photos with a digital frame.',
+    image: '/products/digital-photo-frame.jpg',
+    price: 80,
+    quantity: 20,
+  },
+  {
+    name: 'Bluetooth Car Adapter',
+    desc: 'Stream music and make calls via your car stereo.',
+    image: '/products/bluetooth-car-adapter.jpg',
+    price: 25,
+    quantity: 60,
+  },
+  {
+    name: 'Smart Scale',
+    desc: 'Track weight, BMI, and body composition.',
+    image: '/products/smart-scale.jpg',
+    price: 60,
+    quantity: 35,
+  },
+  {
+    name: 'Gaming Desk Mat',
+    desc: 'Extra-large mouse pad for gaming and work.',
+    image: '/products/gaming-desk-mat.jpg',
+    price: 40,
+    quantity: 50,
+  },
+  {
+    name: 'LED Strip Lights',
+    desc: 'Color-changing LED strips with remote control.',
+    image: '/products/led-strip-lights.jpg',
+    price: 30,
+    quantity: 70,
+  },
 ];
 @Injectable()
 export class SeederService {
@@ -213,6 +360,7 @@ export class SeederService {
     const contactRepo = AppDataSource.getRepository(Contact);
     const paymentRepo = AppDataSource.getRepository(Payment);
     const shippingRepo = AppDataSource.getRepository(ShippingAddress);
+    const categoryRepo = AppDataSource.getRepository(Category);
 
     // ---------- USERS ----------
 
@@ -267,6 +415,17 @@ export class SeederService {
       users.push(u);
     }
 
+    // ----------category-----------
+    for (const c of categories) {
+      const category = categoryRepo.create({
+        name: c.name,
+        image: c.image,
+      });
+      await categoryRepo.save(category);
+    }
+    // Fetch all categories after saving so we can assign randomly
+    const allCategories = await categoryRepo.find();
+
     // ---------- PRODUCTS ----------
     for (const p of products) {
       const inventory = inventoryRepo.create({
@@ -275,7 +434,12 @@ export class SeederService {
       });
       await inventoryRepo.save(inventory);
 
+      // Pick a random category
+      const randomCategory =
+        allCategories[Math.floor(Math.random() * allCategories.length)];
+
       const product = productRepo.create({
+        category: randomCategory,
         name: p.name,
         desc: p.desc, // make sure your entity has this column
         image: p.image,

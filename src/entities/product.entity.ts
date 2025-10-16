@@ -7,9 +7,11 @@ import {
   OneToOne,
   JoinColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Inventory } from './inventory.entity';
 import { OrderItem } from './orderItem.entity';
+import { Category } from './category.entity';
 
 @Entity('products')
 export class Product {
@@ -37,4 +39,7 @@ export class Product {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];
+
+  @ManyToOne(() => Category, (category) => category.products)
+  category: Category;
 }

@@ -22,6 +22,7 @@ export class ProductsService {
     Object.assign(existing, data);
     return this.repo.save(existing);
   }
+
   async delete(id: number) {
     const existing = await this.repo.findOneBy({ id });
     if (!existing) {
@@ -29,6 +30,7 @@ export class ProductsService {
     }
     return this.repo.delete(id);
   }
+
   async findAll(
     page: number,
     limit: number,
@@ -36,11 +38,13 @@ export class ProductsService {
     query?: string,
     min?: number,
     max?: number,
+    categories?: number[] | undefined, //
   ) {
     const qb = this.repo
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.inventory', 'inventory')
-      .orderBy('product.name', order)
+      .leftJoinAndSelect('product.category', 'category') // join category relation
+      .orderBy('product.name', order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC')
       .take(limit)
       .skip((page - 1) * limit);
 
@@ -51,12 +55,15 @@ export class ProductsService {
     if (min !== undefined) {
       qb.andWhere('inventory.price >= :min', { min });
     }
+
     if (max !== undefined) {
       qb.andWhere('inventory.price <= :max', { max });
     }
+    if (categories && categories.length > 0) {
+      qb.andWhere('category.id IN (:...categories)', { categories });
+    }
 
     const [data, total] = await qb.getManyAndCount();
-
     return {
       data,
       meta: {
