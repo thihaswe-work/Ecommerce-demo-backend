@@ -42,10 +42,14 @@ export class User {
   updatedAt: Date;
 
   // One user can have many addresses
-  @OneToMany(() => Address, (address) => address.user, { cascade: true })
+  @OneToMany(() => Address, (address) => address.user, {
+    eager: true,
+    cascade: true,
+  })
   address: Address[];
 
   @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user, {
+    eager: true,
     cascade: true,
   })
   paymentMethod: PaymentMethod[];

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Product } from '../../entities/product.entity';
@@ -22,6 +23,7 @@ export class ProductsController {
 
   @Get()
   async GetAllProducts(
+    @Req() req,
     @Query('max') max: string,
     @Query('min') min: string,
     @Query('query') query: string,
@@ -39,6 +41,9 @@ export class ProductsController {
       : category
         ? [category]
         : undefined;
+    const bearer = req.headers['authorization'];
+    const authHeader = bearer?.split(' ')[1];
+    if (authHeader) return this.productsService.findAdminAll();
 
     const categoryIds = categoryArray ? categoryArray?.map(Number) : undefined; // convert to numbers
     const minNum = min !== undefined && min !== '' ? Number(min) : undefined;

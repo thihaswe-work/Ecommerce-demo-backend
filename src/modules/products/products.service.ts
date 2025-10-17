@@ -76,6 +76,10 @@ export class ProductsService {
     };
   }
 
+  async findAdminAll() {
+    return await this.repo.find();
+  }
+
   async findOne(id: number): Promise<Product> {
     return await this.repo.findOne({
       where: { id },
