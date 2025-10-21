@@ -22,6 +22,12 @@ export class MeService {
     @InjectRepository(Order) private readonly orderRepo: Repository<Order>,
   ) {}
 
+  async adminProfile(userId: string) {
+    const data = await this.userRepo.findOneBy({ id: userId });
+
+    return data;
+  }
+
   async profile(userId: string) {
     try {
       const addresses = await this.addressRepo.find({
@@ -53,6 +59,7 @@ export class MeService {
     Object.assign(user, data);
     return await this.userRepo.save(user);
   }
+
   async updatePassword(
     userId: string,
     currentPassword: string,

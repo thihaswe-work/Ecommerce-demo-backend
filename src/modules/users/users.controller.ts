@@ -43,10 +43,8 @@ export class UsersController {
     @Param('id') id: string,
     @Body() body: Partial<User>,
   ) {
-    return new Promise((resolve, reject) => {
-      const updated = this.usersService.update(id, body);
-      return updated;
-    });
+    const updated = this.usersService.update(id, body);
+    return updated;
   }
 
   @Delete(':id')

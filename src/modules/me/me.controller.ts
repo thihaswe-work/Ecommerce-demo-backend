@@ -18,12 +18,24 @@ import { User } from '@/entities/user.entity';
 import { Address } from '@/entities/address.entity';
 import { PaymentMethod } from '@/entities/payment-method.entity';
 import { Order } from '@/entities/order.entity';
+import { RolesGuard } from '@/common/roles.guard';
+import { Roles } from '@/common/roles.decorator';
+import { Role } from '@/common/enum';
 
 @Controller('me')
 export class MeController {
   constructor(private readonly meService: MeService) {}
 
   // -------- PROFILE --------
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  @Get('adminProfile')
+  async adminProfile(@Req() req: any) {
+    const { user } = req;
+    const data = await this.meService.adminProfile(user.id);
+    return data;
+  }
+
   @Get()
   @UseGuards(AuthGuard, OwnershipGuardFactory(User))
   async profile(@Req() req: any, @Res() res: Response) {
