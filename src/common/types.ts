@@ -1,6 +1,6 @@
 export interface Address {
   id: number;
-  type: "shipping" | "billing";
+  type: 'shipping' | 'billing';
   firstName: string;
   lastName: string;
   address: string;
@@ -21,15 +21,7 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
 }
-// export interface PaymentMethod {
-//   id: string;
-//   type: 'card' | 'paypal';
-//   cardLast4?: string;
-//   cardBrand?: string;
-//   expiryMonth?: number;
-//   expiryYear?: number;
-//   isDefault: boolean;
-// }
+
 export interface PaymentMethod {
   id: number;
   // type: 'card' | 'paypal'; // e.g., "card", "paypal", etc.
@@ -62,13 +54,13 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
-  paymentType: "card" | "paypal";
+  paymentType: 'card' | 'paypal';
   userId: string;
   items: OrderItem[];
   subtotal: number;
   shipping: number;
   total: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   shippingAddressId: number;
   paymentMethodId: number;
   shippingAddress: Address;

@@ -37,13 +37,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Req() req: Request,
-    @Res() res: Response,
     @Param('id') id: string,
     @Body() body: Partial<User>,
   ) {
-    const updated = this.usersService.update(id, body);
+    const updated = await this.usersService.update(id, body);
     return updated;
   }
 
