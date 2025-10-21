@@ -47,6 +47,8 @@ export class ProductsService {
       .orderBy('product.name', order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC')
       .take(limit)
       .skip((page - 1) * limit);
+    // Only active products
+    qb.andWhere('product.status = :status', { status: true });
 
     if (query) {
       qb.andWhere('product.name LIKE :query', { query: `%${query}%` });
@@ -64,8 +66,10 @@ export class ProductsService {
     }
 
     const [data, total] = await qb.getManyAndCount();
+    // Remove status from the returned objects
+    const cleanedData = data.map(({ status, ...rest }) => rest);
     return {
-      data,
+      data: cleanedData,
       meta: {
         totalItems: total,
         itemCount: data.length,

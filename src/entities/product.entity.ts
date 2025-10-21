@@ -27,6 +27,9 @@ export class Product {
   @Column({ type: 'varchar', length: 1024, nullable: true })
   image?: string;
 
+  @Column({ type: 'boolean', default: true })
+  status: boolean;
+
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 

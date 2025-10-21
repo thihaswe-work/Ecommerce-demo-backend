@@ -36,21 +36,24 @@ const products = [
   {
     name: 'Mechanical Keyboard',
     desc: 'RGB mechanical keyboard',
-    image: '',
+    image:
+      'https://images.unsplash.com/photo-1619683322755-4545503f1afa?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074',
     price: 80,
     quantity: 40,
   },
   {
     name: 'Gaming Headset',
     desc: 'Surround sound gaming headset',
-    image: '',
+    image:
+      'https://plus.unsplash.com/premium_photo-1679177184017-7777cdbb2ba5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170',
     price: 100,
     quantity: 30,
   },
   {
     name: 'External SSD 1TB',
     desc: 'Portable high-speed SSD',
-    image: '',
+    image:
+      'https://media.istockphoto.com/id/1167762639/photo/external-compact-ssd-drive-with-usb-cable-for-writing-reading-and-storing-data-on-a-white.webp?a=1&b=1&s=612x612&w=0&k=20&c=ZU4V_sMJuEh2vUglN-evORoi90oLPJ-a7BXx4nS89SM=',
     price: 150,
     quantity: 25,
   },
