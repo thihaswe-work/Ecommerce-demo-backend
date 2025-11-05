@@ -1,3 +1,4 @@
+import { Setting } from '@/entities';
 import { Category } from '@/entities/category.entity';
 import { Injectable } from '@nestjs/common';
 import { AppDataSource } from 'src/data-source';
@@ -364,6 +365,15 @@ export class SeederService {
     const paymentRepo = AppDataSource.getRepository(Payment);
     const shippingRepo = AppDataSource.getRepository(ShippingAddress);
     const categoryRepo = AppDataSource.getRepository(Category);
+    const settingRepo = AppDataSource.getRepository(Setting);
+
+    // ------------settingRepo------------
+
+    const setting = settingRepo.create({
+      underMaintenance: false,
+    });
+
+    await settingRepo.save(setting);
 
     // ---------- USERS ----------
 

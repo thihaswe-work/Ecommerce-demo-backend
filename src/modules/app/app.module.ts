@@ -12,6 +12,7 @@ import { UsersModule } from '../users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriesModule } from '../categories/categories.module';
+import { SettingModule } from '../settings/settings.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CategoriesModule } from '../categories/categories.module';
     PaymentsModule,
     AddressModule,
     CategoriesModule,
+    SettingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
