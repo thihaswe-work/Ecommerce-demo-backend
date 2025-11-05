@@ -9,9 +9,10 @@ import { AuthMiddleware } from '../../common/auth.middleware';
 import { Product } from '../../entities/product.entity';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
+import { Category } from '@/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product])],
+  imports: [TypeOrmModule.forFeature([Product, Category])],
   controllers: [ProductsController],
   providers: [
     ProductsService,

@@ -1,25 +1,66 @@
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like } from 'typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
+import { Category, Inventory } from '@/entities';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly repo: Repository<Product>,
+
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
   ) {}
 
-  async create(data: Partial<Product>): Promise<Product> {
-    const product = this.repo.create(data);
+  async create(
+    data: Partial<Product> & { categoryId?: number },
+  ): Promise<Product> {
+    const product = this.repo.create({
+      ...data,
+      inventory: {
+        price: 0,
+        stock: 0,
+      },
+    });
+
+    // If categoryId is provided in the data, find the category and assign it
+    if (data.categoryId) {
+      const category = await this.categoryRepo.findOneBy({
+        id: data.categoryId,
+      });
+      if (!category) throw new NotFoundException('Category not found');
+      product.category = category;
+    }
+
     return this.repo.save(product);
   }
 
-  async update(id: number, data: Partial<Product>): Promise<Product> {
-    const existing = await this.repo.findOneBy({ id });
+  async update(
+    id: number,
+    data: Partial<Product> & { categoryId?: number },
+  ): Promise<Product> {
+    const existing = await this.repo.findOne({
+      where: { id },
+      relations: ['category'], // Ensure the current category is loaded
+    });
+
     if (!existing) throw new NotFoundException('Product not found');
+
+    // If categoryId is provided in the data, find the category and assign it
+    if (data.categoryId) {
+      const category = await this.categoryRepo.findOneBy({
+        id: data.categoryId,
+      });
+      if (!category) throw new NotFoundException('Category not found');
+      existing.category = category;
+    }
+
+    // Update other fields of the product
     Object.assign(existing, data);
+
+    // Save the updated product
     return this.repo.save(existing);
   }
 
@@ -81,7 +122,7 @@ export class ProductsService {
   }
 
   async findAdminAll() {
-    return await this.repo.find();
+    return await this.repo.find({ relations: ['category'] });
   }
 
   async findOne(id: number): Promise<Product> {
