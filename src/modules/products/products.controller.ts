@@ -43,9 +43,16 @@ export class ProductsController {
         : undefined;
     // const bearer = req.headers['authorization'];
     // const authHeader = bearer?.split(' ')[1];
+    const bearer = req.headers['cookie'];
 
-    const authHeader = req.headers['cookie'].split('=')[1];
-    if (authHeader) return this.productsService.findAdminAll();
+    const authHeader = bearer.split('=')[1];
+
+    if (
+      authHeader &&
+      bearer.split('=')[0] !== 'token' &&
+      authHeader !== 'undefined'
+    )
+      return this.productsService.findAdminAll();
 
     const categoryIds = categoryArray ? categoryArray?.map(Number) : undefined; // convert to numbers
     const minNum = min !== undefined && min !== '' ? Number(min) : undefined;
