@@ -22,6 +22,7 @@ async function bootstrap() {
   });
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
   await app.listen(port);
+
   console.log(
     `Server running at http://${process.env.DB_HOST || 'localhost'}:${port}`,
   );

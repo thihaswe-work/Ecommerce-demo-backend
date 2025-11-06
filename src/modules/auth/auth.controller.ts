@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { first } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
@@ -69,7 +68,6 @@ export class AuthController {
         path: '/',
         maxAge: body.remember ? 7 * 24 * 60 * 60 * 1000 : undefined,
       });
-
       const { password: _, ...safeUser } = user;
       return res.status(HttpStatus.OK).json({
         message: 'Logged in',
